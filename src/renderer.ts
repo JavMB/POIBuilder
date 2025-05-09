@@ -35,7 +35,6 @@ import 'leaflet/dist/leaflet.css';
 
 
 import {GestionPasos} from './ui/GestionPasos';
-import {initMap} from "./ui/Map";
 
 const gestorPasos = new GestionPasos();
 
@@ -45,7 +44,7 @@ botonSiguiente?.addEventListener('click', async () => {
     await gestorPasos.cargarPaso();
 });
 
-initMap()
+
 
 
 

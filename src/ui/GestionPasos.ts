@@ -54,6 +54,7 @@ export class GestionPasos {
             //  Llamar a initMap solo si estamos en paso 1
             if (this.pasoActual === 0) {
                 initMap();
+
             } else if (this.pasoActual === 1) {
 
             }
