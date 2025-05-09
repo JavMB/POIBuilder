@@ -2,7 +2,7 @@ import L from 'leaflet';
 import 'leaflet-control-geocoder';
 
 // --- Tipado para el punto de interés seleccionado ---
-interface MapLocation {
+export interface MapLocation {
     nombre: string;
     latitud: number;
     longitud: number;
