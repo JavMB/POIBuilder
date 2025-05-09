@@ -1,4 +1,5 @@
-import {initMap} from "./Map";
+import { initMap, getMapCoordinates } from "./Map";
+
 
 export enum Direccion {
     Adelante = 'adelante',
@@ -12,8 +13,6 @@ export class GestionPasos {
     constructor() {
         this.pasos = ["paso1.html", "paso2.html", "paso3.html"];
         this.pasoActual = -1;
-
-        // Instalar los listeners solo UNA VEZ
         this.inicializarBotones();
     }
 
@@ -32,7 +31,7 @@ export class GestionPasos {
     }
 
     async cargarPaso(direccion?: Direccion): Promise<void> {
-        const headerPasos: HTMLElement = document.querySelector('.header__pasos');
+        const headerPasos = document.querySelector('.header__pasos') as HTMLElement;
         if (this.pasoActual === -1) {
             this.pasoActual = 0;
             if (headerPasos) {
@@ -41,6 +40,20 @@ export class GestionPasos {
         } else if (direccion === Direccion.Atras && this.pasoActual > 0) {
             this.pasoActual--;
         } else if (direccion === Direccion.Adelante && this.pasoActual < this.pasos.length - 1) {
+            // --- GUARDAR DATOS SOLO AL PASAR DE PASO 1 ---
+            if (this.pasoActual === 0) {
+                const datos = this.recogerDatosFormulario();
+                const nombreArchivo = `${datos.coordenadas.nombre.toLowerCase()}.json`;
+                // Llama a la API expuesta desde preload
+                if (window.electronAPI) {
+                    try {
+                        await window.electronAPI.guardarJson(nombreArchivo, datos);
+                        console.log('Datos guardados en', nombreArchivo);
+                    } catch (e) {
+                        console.error('Error guardando JSON:', e);
+                    }
+                }
+            }
             this.pasoActual++;
         }
 
@@ -50,19 +63,31 @@ export class GestionPasos {
         const contenedor = document.getElementById('contenido');
         if (contenedor) {
             contenedor.innerHTML = html;
-
-            //  Llamar a initMap solo si estamos en paso 1
             if (this.pasoActual === 0) {
                 initMap();
-
-            } else if (this.pasoActual === 1) {
-
             }
         }
 
         this.mostrarCirculoActivo(this.pasoActual);
     }
 
+    recogerDatosFormulario(): any {
+        // Coger datos del mapa
+        const coords = getMapCoordinates();
+
+        // Coger datos del formulario
+        const nombreInput = document.getElementById('nombre') as HTMLInputElement;
+        const descripcionInput = document.getElementById('descripcion') as HTMLTextAreaElement;
+
+        const nombre = nombreInput?.value || '';
+        const descripcion = descripcionInput?.value || '';
+
+        return {
+            nombre,
+            descripcion,
+            coordenadas: coords
+        };
+    }
 
     mostrarCirculoActivo(paso: number): void {
         const todosLosCirculos = document.querySelectorAll('.header__paso');
