@@ -1,4 +1,4 @@
-import {initMap, getMapCoordinates, MapLocation} from "./Map";
+import {initMap, getMapCoordinates, MapLocation, getLocalidadFromCoords} from "./Map";
 
 export enum Direccion {
     Adelante = 'adelante',
@@ -9,8 +9,10 @@ interface DatosWizard {
     nombre?: string;
     descripcion?: string;
     coordenadas?: MapLocation;
+    localidad?: string;
     pregunta?: string;
     respuestas?: string[];
+    correcta?: number; // índice de la respuesta correcta
 }
 
 export class GestionPasos {
@@ -26,7 +28,6 @@ export class GestionPasos {
     private inicializarBotones(): void {
         document.addEventListener('click', async (event) => {
             const target = event.target as HTMLElement;
-
             if (target.classList.contains('btn-siguiente')) {
                 await this.cargarPaso(Direccion.Adelante);
             }
@@ -38,54 +39,74 @@ export class GestionPasos {
 
     async cargarPaso(direccion?: Direccion): Promise<void> {
         const headerPasos = document.querySelector('.header__pasos') as HTMLElement | null;
+
+        // Si estamos iniciando el wizard
         if (this.pasoActual === -1) {
             this.pasoActual = 0;
             if (headerPasos) headerPasos.style.display = 'flex';
-        } else if (direccion === Direccion.Atras && this.pasoActual > 0) {
+        }
+        // Si estamos retrocediendo
+        else if (direccion === Direccion.Atras && this.pasoActual > 0) {
             this.pasoActual--;
-        } else if (direccion === Direccion.Adelante && this.pasoActual < this.pasos.length - 1) {
-            // Recoge datos del paso actual antes de avanzar
-            this.recogerDatosFormulario(this.pasoActual);
+        }
+        // Si estamos avanzando
+        else if (direccion === Direccion.Adelante) {
+            // Recoger datos del formulario actual
+            await this.recogerDatosFormulario(this.pasoActual);
 
-            // Establece el nombre de archivo en el paso 1
-            if (this.pasoActual === 0 && this.datos.nombre) {
-                this.nombreArchivo = `${this.datos.nombre.toLowerCase()}.json`;
-            }
-
-            // Guarda el JSON si tenemos nombre de archivo
-            if (window.electronAPI && this.nombreArchivo) {
-                try {
-                    await window.electronAPI.guardarJson(this.nombreArchivo, this.datos);
-                    console.log('Datos guardados en', this.nombreArchivo);
-                } catch (e) {
-                    console.error('Error guardando JSON:', e);
+            // Si estamos en el último paso (paso 3, índice 2)
+            if (this.pasoActual === this.pasos.length - 1) {
+                // Guardar datos si estamos en el último paso
+                if (window.electronAPI && this.nombreArchivo) {
+                    try {
+                        await window.electronAPI.guardarJson(this.nombreArchivo, this.datos);
+                        alert('Datos guardados en ' + this.nombreArchivo);
+                    } catch (e) {
+                        alert('Error guardando JSON: ' + e);
+                    }
                 }
+                return; // No avanzar más, ya estamos en el último paso
+            } else {
+                // Avanzar al siguiente paso si no estamos en el último
+                this.pasoActual++;
             }
-            this.pasoActual++;
         }
 
-        // Carga el HTML del paso
+        // Carga el HTML del paso actual
         const response = await fetch(this.pasos[this.pasoActual]);
         const html = await response.text();
         const contenedor = document.getElementById('contenido');
         if (contenedor) {
             contenedor.innerHTML = html;
+            // Inicializa el mapa solo en el primer paso
             if (this.pasoActual === 0) {
                 initMap();
+            }
+            // Rellena datos para revisión en el último paso
+            if (this.pasoActual === 2) {
+                this.rellenarRevision();
             }
         }
 
         this.mostrarCirculoActivo(this.pasoActual);
     }
-
-    // Recoge los datos del formulario según el paso actual
-    private recogerDatosFormulario(paso: number): void {
+    private async recogerDatosFormulario(paso: number): Promise<void> {
         if (paso === 0) {
-            this.datos.coordenadas = getMapCoordinates();
+            // RECOGE EL NOMBRE AQUÍ
             const nombreInput = document.getElementById('nombre') as HTMLInputElement | null;
-            const descripcionInput = document.getElementById('descripcion') as HTMLTextAreaElement | null;
             this.datos.nombre = nombreInput?.value.trim() || '';
+
+            const descripcionInput = document.getElementById('descripcion') as HTMLTextAreaElement | null;
             this.datos.descripcion = descripcionInput?.value.trim() || '';
+
+            this.datos.coordenadas = getMapCoordinates();
+
+            if (this.datos.coordenadas) {
+                const {latitud, longitud} = this.datos.coordenadas;
+                const localidad = await getLocalidadFromCoords(latitud, longitud);
+                this.datos.localidad = localidad;
+                this.nombreArchivo = `${localidad.toLowerCase().replace(/\s+/g, "_")}.json`;
+            }
         }
         if (paso === 1) {
             const preguntaInput = document.getElementById('pregunta') as HTMLInputElement | null;
@@ -94,8 +115,40 @@ export class GestionPasos {
                 const r = document.getElementById(`respuesta${i}`) as HTMLInputElement | null;
                 return r?.value.trim() || '';
             });
+            // Correcta: radio button con value=0..3
+            const correctaInput = document.querySelector('input[name="correcta"]:checked') as HTMLInputElement | null;
+            this.datos.correcta = correctaInput ? parseInt(correctaInput.value, 10) : undefined;
         }
-        // permitir editar el JSON completo si lo deseas
+        if (paso === 2) {
+            // Nombre y descripción editables en revisión
+            const nombreInput = document.getElementById('nombre') as HTMLInputElement | null;
+            const descripcionInput = document.getElementById('descripcion') as HTMLTextAreaElement | null;
+            this.datos.nombre = nombreInput?.value.trim() || '';
+            this.datos.descripcion = descripcionInput?.value.trim() || '';
+        }
+    }
+
+    private rellenarRevision(): void {
+        // Nombre y descripción editables
+        (document.getElementById('nombre') as HTMLInputElement).value = this.datos.nombre || '';
+        (document.getElementById('descripcion') as HTMLTextAreaElement).value = this.datos.descripcion || '';
+        // El resto solo lectura
+        (document.getElementById('coordenadas') as HTMLInputElement).value =
+            this.datos.coordenadas ? `${this.datos.coordenadas.latitud}, ${this.datos.coordenadas.longitud}` : '';
+        (document.getElementById('localidad') as HTMLInputElement).value = this.datos.localidad || '';
+        (document.getElementById('pregunta') as HTMLInputElement).value = this.datos.pregunta || '';
+
+        // Rellenar lista de respuestas y resaltar la correcta
+        const ul = document.getElementById('lista-respuestas');
+        if (ul && this.datos.respuestas) {
+            ul.innerHTML = '';
+            this.datos.respuestas.forEach((resp, idx) => {
+                const li = document.createElement('li');
+                li.textContent = resp;
+                if (idx === this.datos.correcta) li.style.fontWeight = 'bold';
+                ul.appendChild(li);
+            });
+        }
     }
 
     private mostrarCirculoActivo(paso: number): void {

@@ -1,13 +1,30 @@
 <section class="preguntas">
     <h2 class="preguntas__titulo">Preguntas</h2>
 
-    <label for="nombre" class="formulario__label">Nombre:</label>
-    <input type="text" id="nombre" class="formulario__input" placeholder="Introduce el nombre" />
+    <label for="pregunta" class="formulario__label">Pregunta:</label>
+    <input type="text" id="pregunta" class="formulario__input" placeholder="Introduce la pregunta" />
 
-    <label for="descripcion" class="formulario__label">Descripción:</label>
-    <textarea id="descripcion" class="formulario__input" placeholder="Introduce una descripción"></textarea>
+    <form id="form-respuestas">
+        <p>Respuestas (marca la correcta):</p>
+        <div class="respuesta">
+            <input type="radio" name="correcta" id="correcta1" value="0" required>
+            <input type="text" id="respuesta1" name="respuesta1" class="formulario__input" placeholder="Respuesta 1" maxlength="80" required>
+        </div>
+        <div class="respuesta">
+            <input type="radio" name="correcta" id="correcta2" value="1">
+            <input type="text" id="respuesta2" name="respuesta2" class="formulario__input" placeholder="Respuesta 2" maxlength="80" required>
+        </div>
+        <div class="respuesta">
+            <input type="radio" name="correcta" id="correcta3" value="2">
+            <input type="text" id="respuesta3" name="respuesta3" class="formulario__input" placeholder="Respuesta 3" maxlength="80" required>
+        </div>
+        <div class="respuesta">
+            <input type="radio" name="correcta" id="correcta4" value="3">
+            <input type="text" id="respuesta4" name="respuesta4" class="formulario__input" placeholder="Respuesta 4" maxlength="80" required>
+        </div>
+    </form>
 
-    <button class="btn-siguiente">Siguiente</button>
     <button class="btn-anterior">Volver</button>
+    <button class="btn-siguiente">Siguiente</button>
 
 </section>

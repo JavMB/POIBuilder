@@ -31,6 +31,7 @@ import '../styles/pasos.css';
 import '../styles/formulario.css';
 import '../styles/bienvenida.css';
 import '../styles/paso1.css';
+import '../styles/paso2.css';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-control-geocoder/dist/Control.Geocoder.css';
 

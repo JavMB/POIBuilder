@@ -1,13 +1,27 @@
 <section class="revisar">
-    <h2 class="preguntas__titulo">Revisar</h2>
+    <h2 class="preguntas__titulo">Revisar y Confirmar</h2>
 
-    <label for="nombre" class="formulario__label">Nombre:</label>
+    <label for="nombre" class="formulario__label">Nombre del punto:</label>
     <input type="text" id="nombre" class="formulario__input" placeholder="Introduce el nombre" />
 
     <label for="descripcion" class="formulario__label">Descripción:</label>
     <textarea id="descripcion" class="formulario__input" placeholder="Introduce una descripción"></textarea>
 
-    <button class="btn-siguiente">Siguiente</button>
-    <button class="btn-anterior">Volver</button>
+    <label for="coordenadas" class="formulario__label">Coordenadas:</label>
+    <input type="text" id="coordenadas" class="formulario__input" readonly />
 
+    <label for="localidad" class="formulario__label">Localidad:</label>
+    <input type="text" id="localidad" class="formulario__input" readonly />
+
+    <label for="pregunta" class="formulario__label">Pregunta:</label>
+    <input type="text" id="pregunta" class="formulario__input" readonly />
+
+    <div>
+        <label class="formulario__label">Respuestas:</label>
+        <ul id="lista-respuestas" class="formulario__lista"></ul>
+    </div>
+
+
+    <button class="btn-anterior">Volver</button>
+    <button class="btn-siguiente">Confirmar y Guardar</button>
 </section>

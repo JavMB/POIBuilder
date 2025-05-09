@@ -124,3 +124,46 @@ function updateCurrentLocation(lat: number, lng: number, nombre?: string): void 
 export function getMapCoordinates(): MapLocation {
     return currentMapLocation;
 }
+// Devuelve la localidad (ciudad, pueblo, etc.) para unas coordenadas
+export async function getLocalidadFromCoords(lat: number, lon: number): Promise<string> {
+    try {
+        // Validate coordinates
+        if (lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+            throw new Error('Coordenadas inválidas');
+        }
+
+        const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&accept-language=es`;
+        const response = await fetch(url, {
+            headers: {
+                'User-Agent': 'appeducativa javiermengual@live.com'
+            }
+        });
+
+        // Check if the request was successful
+        if (!response.ok) {
+            throw new Error(`Error en la petición: ${response.status} ${response.statusText}`);
+        }
+
+        const data = await response.json();
+
+        // Ensure data and address exist
+        if (!data || !data.address) {
+            return "desconocido";
+        }
+
+        // Puedes ajustar estos campos según lo que quieras priorizar
+        return (
+            data.address.city ||
+            data.address.town ||
+            data.address.village ||
+            data.address.hamlet ||
+            data.address.municipality ||
+            data.address.county ||
+            data.address.state ||
+            "desconocido"
+        );
+    } catch (error) {
+        console.error('Error al obtener la localidad:', error);
+        return "desconocido";
+    }
+}
