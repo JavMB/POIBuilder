@@ -61,9 +61,15 @@ export class GestionPasos {
                     try {
                         await window.electronAPI.guardarJson(this.nombreArchivo, this.datos);
                         alert('Datos guardados en ' + this.nombreArchivo);
+
+                        // Redirigir al index después de guardar
+                        window.location.href = 'index.html';
                     } catch (e) {
                         alert('Error guardando JSON: ' + e);
                     }
+                } else {
+                    // Si no tenemos electronAPI o nombre de archivo, intentamos redirigir de todas formas
+                    window.location.href = 'index.html';
                 }
                 return; // No avanzar más, ya estamos en el último paso
             } else {
@@ -145,7 +151,10 @@ export class GestionPasos {
             this.datos.respuestas.forEach((resp, idx) => {
                 const li = document.createElement('li');
                 li.textContent = resp;
-                if (idx === this.datos.correcta) li.style.fontWeight = 'bold';
+                if (idx === this.datos.correcta) {
+                    li.classList.add('correcta');
+                    li.textContent = `${resp} (Correcta)`;
+                }
                 ul.appendChild(li);
             });
         }

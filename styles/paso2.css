@@ -1,0 +1,134 @@
+/* Estilos para la sección de preguntas - Scoped to component */
+.preguntas {
+    background-color: var(--color-white);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px var(--color-shadow);
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+}
+
+.preguntas .preguntas__titulo {
+    color: var(--color-primary-dark);
+    font-family: var(--font-headings);
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid var(--color-primary-light);
+    padding-bottom: 0.5rem;
+}
+
+/* Estilos para formulario - Scoped to component */
+.preguntas .formulario__label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--color-primary);
+}
+
+.preguntas .formulario__input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    margin-bottom: 1.2rem;
+    font-family: var(--font-main);
+    color: var(--color-primary-dark);
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.preguntas .formulario__input:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px var(--color-accent-shadow);
+}
+
+.preguntas .formulario__input::placeholder {
+    color: rgba(0, 119, 182, 0.5);
+}
+
+/* Estilos para respuestas - Scoped to component */
+.preguntas .respuesta {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.preguntas .respuesta input[type="radio"] {
+    margin-right: 0.8rem;
+    cursor: pointer;
+    accent-color: var(--color-primary);
+}
+
+.preguntas #form-respuestas p {
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--color-primary);
+}
+
+/* Estilos para botones - Scoped to component */
+.preguntas .btn-anterior,
+.preguntas .btn-siguiente {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    border: none;
+    border-radius: 4px;
+    padding: 0.8rem 1.5rem;
+    font-family: var(--font-main);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    margin-top: 1.5rem;
+}
+
+.preguntas .btn-anterior {
+    background-color: var(--color-white);
+    color: var(--color-primary);
+    border: 1px solid var(--color-primary);
+    margin-right: 0.8rem;
+}
+
+.preguntas .btn-siguiente:hover,
+.preguntas .btn-anterior:hover {
+    background-color: var(--color-primary-dark);
+    color: var(--color-white);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px var(--color-shadow-strong);
+}
+
+.preguntas .btn-anterior:hover {
+    background-color: var(--color-primary);
+}
+
+.preguntas .btn-siguiente:active,
+.preguntas .btn-anterior:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px var(--color-shadow);
+}
+
+/* Estado de validación - Scoped to component */
+.preguntas .formulario__input:invalid {
+    border-color: var(--color-error);
+}
+
+.preguntas .formulario__input:valid {
+    border-color: var(--color-success);
+}
+
+/* Responsividad - Scoped to component */
+@media (max-width: 768px) {
+    .preguntas {
+        padding: 1.5rem;
+        margin: 1rem;
+    }
+
+    .preguntas .btn-anterior,
+    .preguntas .btn-siguiente {
+        width: 100%;
+        margin-top: 1rem;
+        margin-right: 0;
+    }
+
+    .preguntas .btn-anterior {
+        margin-bottom: 0.8rem;
+    }
+}

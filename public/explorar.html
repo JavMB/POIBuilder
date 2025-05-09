@@ -1,0 +1,130 @@
+<section class="explorar">
+    <h2 class="explorar__titulo">Explorar Puntos de Interés</h2>
+
+    <div class="explorar__contenedor">
+        <div class="explorar__sidebar">
+            <div class="explorar__carga">
+                <h3>Seleccionar archivo</h3>
+                <div class="explorar__dropzone" id="dropzone">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    <p>Arrastra y suelta un archivo JSON aquí<br>o</p>
+                    <label for="fileInput" class="btn-cargar">Seleccionar archivo</label>
+                    <input type="file" id="fileInput" accept=".json" hidden>
+                </div>
+            </div>
+
+            <div class="explorar__archivos">
+                <h3>Archivos recientes</h3>
+                <ul id="archivos-recientes" class="explorar__lista">
+                    <!-- Los archivos se cargarán dinámicamente -->
+                </ul>
+            </div>
+        </div>
+
+        <div class="explorar__contenido">
+            <div class="explorar__vacio" id="contenido-vacio">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <p>Selecciona un archivo para visualizar su contenido</p>
+            </div>
+
+            <div class="explorar__datos" id="contenido-datos" style="display: none;">
+                <div class="explorar__datos-header">
+                    <h3 id="punto-nombre">Nombre del punto</h3>
+                    <div class="explorar__acciones">
+                        <button id="btn-editar" class="btn-accion">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                            </svg>
+                            Editar
+                        </button>
+                        <button id="btn-eliminar" class="btn-accion btn-accion--eliminar">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                <line x1="10" y1="11" x2="10" y2="17"></line>
+                                <line x1="14" y1="11" x2="14" y2="17"></line>
+                            </svg>
+                            Eliminar
+                        </button>
+                    </div>
+                </div>
+
+                <div class="explorar__tarjeta">
+                    <div class="explorar__seccion">
+                        <h4>Información general</h4>
+                        <div class="explorar__campo">
+                            <span class="explorar__etiqueta">Descripción:</span>
+                            <p id="punto-descripcion" class="explorar__valor"></p>
+                        </div>
+                        <div class="explorar__campo">
+                            <span class="explorar__etiqueta">Localidad:</span>
+                            <p id="punto-localidad" class="explorar__valor"></p>
+                        </div>
+                    </div>
+
+                    <div class="explorar__seccion">
+                        <h4>Ubicación</h4>
+                        <div class="explorar__mapa" id="mapa-preview"></div>
+                        <div class="explorar__campo">
+                            <span class="explorar__etiqueta">Coordenadas:</span>
+                            <p id="punto-coordenadas" class="explorar__valor"></p>
+                        </div>
+                    </div>
+
+                    <div class="explorar__seccion">
+                        <h4>Quiz</h4>
+                        <div class="explorar__campo">
+                            <span class="explorar__etiqueta">Pregunta:</span>
+                            <p id="punto-pregunta" class="explorar__valor"></p>
+                        </div>
+                        <div class="explorar__campo">
+                            <span class="explorar__etiqueta">Respuestas:</span>
+                            <ul id="punto-respuestas" class="explorar__lista-respuestas"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formulario de edición (inicialmente oculto) -->
+            <div class="explorar__edicion" id="formulario-edicion" style="display: none;">
+                <h3>Editar punto de interés</h3>
+                <form id="form-edicion">
+                    <div class="formulario__grupo">
+                        <label for="edit-nombre" class="formulario__label">Nombre:</label>
+                        <input type="text" id="edit-nombre" class="formulario__input" required>
+                    </div>
+
+                    <div class="formulario__grupo">
+                        <label for="edit-descripcion" class="formulario__label">Descripción:</label>
+                        <textarea id="edit-descripcion" class="formulario__input formulario__textarea" required></textarea>
+                    </div>
+
+                    <div class="formulario__grupo">
+                        <label class="formulario__label">Pregunta:</label>
+                        <input type="text" id="edit-pregunta" class="formulario__input" required>
+                    </div>
+
+                    <div id="edit-respuestas-container">
+                        <!-- Las respuestas se generarán dinámicamente -->
+                    </div>
+
+                    <div class="formulario__grupo formulario__grupo--botones">
+                        <button type="button" id="btn-cancelar" class="btn-anterior">Cancelar</button>
+                        <button type="submit" class="btn-siguiente">Guardar cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <button class="btn-anterior btn-volver-inicio">Volver al inicio</button>
+</section>
