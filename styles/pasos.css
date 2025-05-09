@@ -1,0 +1,32 @@
+.header__pasos {
+  width: 100%;
+  height: 100%;
+  display: none;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.header__paso {
+  height: 4em;
+  width: 4em;
+  border-radius: 50%;
+  background-color: var(--color-primary-light);
+  box-shadow: 0 4px 8px var(--color-shadow-strong);
+  border: 2px solid var(--color-primary);
+  transition: transform 0.3s, background-color 0.3s, color 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary-dark);
+  font-weight: bold;
+}
+
+.header__paso:hover {
+  transform: scale(1.05);
+}
+
+.header__paso--active {
+  background-color: var(--color-accent);
+  color: var(--color-white);
+  box-shadow: 0 4px 12px var(--color-accent-shadow);
+}

@@ -1,0 +1,8 @@
+header {
+  background: var(--color-primary);
+  color: var(--color-white);
+  padding: 2rem;
+  height: 4rem;
+  border-radius: 10px 10px 10px 10px;
+  box-shadow: 0 4px 10px var(--color-shadow-strong);
+}

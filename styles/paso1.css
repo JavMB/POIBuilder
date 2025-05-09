@@ -1,0 +1,154 @@
+
+.formulario__titulo {
+    font-family: var(--font-headings);
+    margin: 0.65rem 5rem;
+}
+
+.formulario__contenido {
+    display: flex;
+    justify-content: space-between; /* Distribuye el espacio entre formulario y mapa */
+    align-items: flex-start; /* Alinea al inicio para que el mapa no se mueva */
+    gap: 3rem; /* Espacio fijo entre elementos */
+    width: 100%;
+    max-width: 90%; /* Limita el ancho total del contenedor */
+    margin: 0 auto; /* Centra el contenido horizontalmente */
+}
+
+/* ======================== */
+/* CAMPOS DEL FORMULARIO */
+/* ======================== */
+
+.formulario__campos {
+    flex: 0 0 300px; /* Ancho fijo para el formulario */
+    display: flex;
+    flex-direction: column;
+    gap: 1rem; /* Espacio entre los campos */
+}
+
+/* Estilo general para inputs y textarea */
+.formulario__campos input[type="text"],
+.formulario__campos textarea {
+    font-family: var(--font-main);
+    width: 100%; /* Ocupa todo el ancho del contenedor */
+    padding: 0.5rem; /* Espaciado interno */
+    border-radius: 0.25rem; /* Esquinas ligeramente redondeadas */
+    border: 1px solid var(--color-border); /* Borde limpio */
+    box-shadow: 0 1px 3px var(--color-shadow); /* Sombra ligera */
+    box-sizing: border-box; /* Incluye padding y border en el ancho */
+    transition: box-shadow 0.3s ease-in-out; /* Animación suave */
+}
+
+/* Estilo específico para textarea */
+.formulario__campos textarea {
+    resize: none; /* Deshabilita el redimensionamiento */
+    height: 4rem; /* Altura fija */
+}
+
+/* Efectos al enfocar inputs y textarea */
+.formulario__campos input[type="text"]:focus,
+.formulario__campos textarea:focus {
+    outline: 2px solid var(--color-accent); /* Resalta el borde al enfocar */
+    box-shadow: 0 0 8px var(--color-accent-shadow); /* Sombra más fuerte */
+}
+
+/* ======================== */
+/* BOTONES DEL FORMULARIO */
+/* ======================== */
+
+.formulario__botones {
+    display: flex;
+    justify-content: space-evenly; /* Distribuye los botones uniformemente */
+    width: 100%;
+}
+
+.formulario__botones button {
+    width: 6rem;
+    color: var(--color-white);
+    background-color: var(--color-primary);
+    border: none; /* Elimina bordes predeterminados */
+    border-radius: 0.5rem; /* Redondea un poco las esquinas */
+    padding: 0.5rem 1rem;
+    font-family: var(--font-main); /* Fuente para mantener consistencia */
+    font-size: 1rem; /* Tamaño de texto adecuado */
+    cursor: pointer; /* Cambia el cursor al pasar por encima */
+    box-shadow: 0 4px 6px var(--color-shadow), 0 2px 4px var(--color-shadow-strong); /* Sombra suave */
+    transition: all 0.3s ease-in-out; /* Transición suave para el hover */
+}
+
+/* Efectos hover y active */
+.formulario__botones button:hover {
+    background-color: var(--color-primary-dark); /* Oscurece el color de fondo */
+    box-shadow: 0 6px 10px var(--color-shadow-strong), 0 4px 6px var(--color-shadow); /* Aumenta ligeramente la sombra */
+    transform: translateY(-1px); /* Sube un poco el botón */
+}
+
+.formulario__botones button:active {
+    background-color: var(--color-primary-light); /* Cambia a un color más claro */
+    box-shadow: 0 2px 4px var(--color-shadow); /* Reduce la sombra */
+    transform: translateY(0); /* Vuelve a su lugar */
+}
+
+/* ======================== */
+/* MAPA */
+/* ======================== */
+
+.formulario__mapa {
+    flex: 1; /* El mapa toma todo el espacio restante */
+    min-width: 400px; /* Ancho mínimo para el mapa */
+    transform: translateY(-2rem); /* Sube el mapa */
+}
+
+#map {
+    height: 45rem; /* Altura estándar para el mapa */
+    width: 100%; /* Ancho completo del contenedor */
+    border-radius: 1rem; /* Bordes redondeados */
+    border: 2px solid var(--color-border); /* Borde visible */
+    box-shadow: 0 4px 6px var(--color-shadow); /* Sombra ligera */
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Suaviza las transiciones */
+}
+
+/* Hover del mapa */
+#map:hover {
+    transform: scale(1.01); /* Aumenta ligeramente el tamaño */
+    box-shadow: 0 6px 12px var(--color-shadow-strong); /* Sombra más intensa */
+}
+
+/* ======================== */
+/* RESPONSIVIDAD */
+/* ======================== */
+
+/* Ajustes para pantallas grandes (2K y superiores) */
+@media (min-width: 2000px) {
+    .formulario__contenido {
+        gap: 5rem; /* Aumenta el espacio entre formulario y mapa */
+    }
+
+    .formulario__mapa {
+        min-width: 50%; /* El mapa ocupa más espacio */
+    }
+
+    #map {
+        height: 50rem; /* Incrementa la altura del mapa */
+    }
+}
+
+/* Ajustes para pantallas pequeñas (móviles y tablets) */
+@media (max-width: 768px) {
+    .formulario__contenido {
+        flex-direction: column; /* Cambia a una columna */
+        gap: 1.5rem; /* Reduce el espacio entre elementos */
+    }
+
+    .formulario__mapa {
+        min-width: 100%; /* El mapa ocupa todo el ancho */
+        transform: translateY(0); /* Elimina el desplazamiento vertical */
+    }
+
+    #map {
+        height: 30rem; /* Reduce la altura del mapa */
+    }
+
+    .formulario__campos {
+        width: 100%; /* El formulario ocupa todo el ancho */
+    }
+}

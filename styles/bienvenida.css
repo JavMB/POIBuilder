@@ -1,0 +1,91 @@
+/* --- Estilos generales --- */
+main {
+    padding: 2rem;
+}
+
+h1 {
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    font-weight: 600;
+    color: var(--color-primary-dark);
+    background-color: var(--color-bg);
+    padding: 0.8rem 1rem;
+    border-bottom: 3px solid var(--color-primary);
+    margin: 1.5rem 0 2rem;
+    border-radius: 4px;
+    box-shadow: 0 2px 6px var(--color-shadow);
+    width: fit-content;
+}
+
+/* --- Bienvenida --- */
+.bienvenida {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(2rem, 1fr));
+    gap: 4rem;
+    margin: 0 1rem;
+}
+
+.bienvenida__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+
+}
+
+
+.bienvenida__box {
+    aspect-ratio: 16/9;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(0.625rem);
+    border-radius: 0.9375rem;
+    box-shadow: 0 0.5rem 1.25rem var(--color-shadow-strong);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: center;
+}
+
+.bienvenida__box:hover {
+    transform: translateY(-0.15rem);
+    box-shadow: 0 0.5rem 1rem var(--color-shadow-strong);
+}
+
+.bienvenida__box__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 0.9375rem;
+    transition: transform 0.7s ease;
+
+}
+
+.bienvenida__box:hover .bienvenida__box__img {
+    transform: scale(1.03); /* Zoom más sutil, antes era 1.05 */
+
+}
+
+
+.bienvenida__item button {
+    font-size: 1.2rem;
+    padding: 0.8rem 1.6rem;
+    border-radius: 0.5rem;
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 8px var(--color-shadow);
+    min-width: 10rem;
+
+}
+
+.bienvenida__item button:hover {
+    transform: translateY(-3px);
+    background-color: var(--color-primary-dark);
+    box-shadow: 0 6px 12px var(--color-shadow-strong);
+}
+
+.bienvenida__item button:active {
+    transform: translateY(-1px); /* Efecto de "presionar" */
+}
+
+

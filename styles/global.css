@@ -1,0 +1,35 @@
+:root {
+  /* Paleta marina profesional */
+  --color-primary: #0077b6;           /* honolulu-blue */
+  --color-primary-dark: #023e8a;      /* marian-blue */
+  --color-primary-light: #caf0f8;     /* light-cyan */
+
+  --color-bg: #fafdff;                /* blanco azulado, limpio */
+  --color-white: #ffffff;
+
+  --color-shadow: rgba(2, 62, 138, 0.06);
+  --color-shadow-strong: rgba(3, 4, 94, 0.13);
+
+  --color-accent: #00b4d8;            /* pacific-cyan */
+  --color-accent-shadow: rgba(0, 180, 216, 0.15);
+  --color-border: #90e0ef;            /* non-photo-blue */
+
+  /* Colores de estado */
+  --color-success: #48cae4;           /* vivid-sky-blue */
+  --color-warning: #ade8f4;           /* non-photo-blue-2 */
+  --color-error: #ff6f6f;             /* rojo coral (fuera de la paleta, pero suave) */
+  --color-info: #0096c7;              /* blue-green */
+
+  /* Tipografía */
+  --font-main: 'Inter', 'Roboto', system-ui, sans-serif;
+  --font-headings: 'Montserrat', 'Inter', sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--color-bg);
+  font-family: var(--font-main);
+  color: var(--color-primary-dark);
+}
+
