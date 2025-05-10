@@ -1,3 +1,4 @@
+import { cargarBienvenida } from '../renderer';
 export class Contacto {
     private readonly contactoHTML = "contacto.html";
 
@@ -17,7 +18,7 @@ export class Contacto {
             // Detectar clic en botón de volver desde contacto
             if (target.classList.contains('btn-anterior') &&
                 document.querySelector('.contacto')) {
-                window.location.href = 'index.html';
+                await cargarBienvenida();
             }
 
             // Detectar envío del formulario
@@ -66,12 +67,11 @@ export class Contacto {
         const asunto = (document.getElementById('asunto') as HTMLInputElement).value;
         const mensaje = (document.getElementById('mensaje') as HTMLTextAreaElement).value;
 
-
-        //implementar algo de correo nodemailer o algo
         alert(`¡Gracias por contactarnos ${nombre}! Tu mensaje ha sido enviado correctamente. Te responderemos lo antes posible en ${email}.`);
 
-        setTimeout(() => {
-            window.location.href = 'index.html';
+
+        setTimeout(async () => {
+            await cargarBienvenida();
         }, 1500);
     }
 }

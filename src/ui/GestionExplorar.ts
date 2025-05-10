@@ -1,6 +1,7 @@
 import L from 'leaflet';
 import 'leaflet-control-geocoder';
-import { initMap, MapLocation } from "./Map";
+import { MapLocation } from "./Map";
+import { cargarBienvenida } from '../renderer';
 
 /**
  * Interfaz que representa un punto de interés completo
@@ -67,7 +68,7 @@ export class GestionExplorar {
             <div class="error-mensaje">
                 <h3>Error al cargar la interfaz</h3>
                 <p>No se pudo cargar la interfaz de exploración.</p>
-                <button class="btn-anterior" onclick="window.location.href='index.html'">Volver al inicio</button>
+                <button class="btn-anterior" onclick="await cargarBienvenida();">Volver al inicio</button>
             </div>
         `;
         }
@@ -148,7 +149,8 @@ export class GestionExplorar {
         const btnVolverInicio = document.querySelector('.btn-volver-inicio');
         if (btnVolverInicio) {
             btnVolverInicio.addEventListener('click', () => {
-                window.location.href = 'index.html';
+                cargarBienvenida().catch(console.error);
+
             });
         }
     }

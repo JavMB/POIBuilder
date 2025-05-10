@@ -1,4 +1,5 @@
 import {initMap, getMapCoordinates, MapLocation, getLocalidadFromCoords} from "./Map";
+import {cargarBienvenida} from '../renderer';
 
 export enum Direccion {
     Adelante = 'adelante',
@@ -20,35 +21,40 @@ export class GestionPasos {
     private pasoActual = -1;
     private datos: DatosWizard = {};
     private nombreArchivo = "";
+    private handler!: (e: MouseEvent) => void;
 
     constructor() {
         this.inicializarBotones();
     }
 
     private inicializarBotones(): void {
-        // Añadir listener con delegación de eventos pero verificando contexto
-        document.addEventListener('click', async (event) => {
+        this.handler = async (event) => {
             const target = event.target as HTMLElement;
-
-            // Verificar que NO estamos en la página de inicio
             const esPaginaInicio = document.querySelector('.bienvenida');
 
-            // Solo procesar si no estamos en la página principal
             if (!esPaginaInicio) {
                 if (target.classList.contains('btn-siguiente')) {
                     await this.cargarPaso(Direccion.Adelante);
                 }
                 if (target.classList.contains('btn-anterior')) {
-                    // Si estamos en el primer paso, volver al index
                     if (this.pasoActual === 0) {
-                        window.location.href = 'index.html';
+                        this.destruir();              // 👈
+                        await cargarBienvenida();
                     } else {
                         await this.cargarPaso(Direccion.Atras);
                     }
                 }
             }
-        });
+        };
+
+        document.addEventListener('click', this.handler);
     }
+
+    /** Limpia el listener */
+    private destruir(): void {
+        document.removeEventListener('click', this.handler);
+    }
+
 
     public async iniciarWizard(): Promise<void> {
         // Iniciar el wizard desde el primer paso
@@ -81,13 +87,16 @@ export class GestionPasos {
                         alert('Datos guardados en ' + this.nombreArchivo);
 
                         // Redirigir al index después de guardar
-                        window.location.href = 'index.html';
+                        await cargarBienvenida();
+
                     } catch (e) {
                         alert('Error guardando JSON: ' + e);
                     }
                 } else {
                     // Si no tenemos electronAPI o nombre de archivo, intentamos redirigir de todas formas
-                    window.location.href = 'index.html';
+                    this.destruir();
+                    await cargarBienvenida();
+
                 }
                 return; // No avanzar más, ya estamos en el último paso
             } else {
