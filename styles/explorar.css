@@ -6,6 +6,7 @@
     max-width: 1200px;
     margin: 2rem auto;
     padding: 2rem;
+    position: relative;
 }
 
 .explorar__titulo {
@@ -21,6 +22,42 @@
 .explorar__contenedor {
     display: flex;
     gap: 1.5rem;
+    margin-bottom: 2rem; /* Espacio para el botón */
+}
+
+/* Botón Volver al inicio */
+.btn-volver-inicio {
+    display: block;
+    width: fit-content;
+    margin: 0 auto;
+    padding: 0.7rem 1.5rem;
+    background-color: var(--color-primary-light);
+    color: var(--color-primary);
+    border: 1px solid var(--color-primary);
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s, transform 0.2s;
+    position: relative;
+    z-index: 10;
+}
+
+/* Quitar márgenes que causan espacio adicional */
+button.btn-volver-inicio {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.btn-volver-inicio:hover {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    transform: translateY(-2px);
+}
+
+/* Contenedor adicional para el botón */
+.explorar__botonera {
+    text-align: center;
+    margin-top: 2rem;
 }
 
 /* Sidebar */
@@ -35,6 +72,7 @@
     margin-bottom: 1rem;
 }
 
+/* Dropzone para archivos */
 .explorar__dropzone {
     border: 2px dashed var(--color-border);
     border-radius: 8px;
@@ -45,7 +83,8 @@
     cursor: pointer;
 }
 
-.explorar__dropzone:hover {
+.explorar__dropzone:hover,
+.explorar__dropzone--active {
     background-color: var(--color-primary-light);
     border-color: var(--color-accent);
 }
@@ -77,10 +116,14 @@
     background-color: var(--color-primary-dark);
 }
 
+/* Lista de archivos */
 .explorar__lista {
     list-style: none;
     padding: 0;
     margin: 0;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    overflow: hidden;
 }
 
 .explorar__lista li {
@@ -88,9 +131,10 @@
     border-bottom: 1px solid var(--color-border);
     cursor: pointer;
     transition: background-color 0.3s;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+}
+
+.explorar__lista li:last-child {
+    border-bottom: none;
 }
 
 .explorar__lista li:hover {
@@ -100,6 +144,14 @@
 .explorar__lista li.active {
     background-color: var(--color-primary-light);
     border-left: 3px solid var(--color-primary);
+    font-weight: 600;
+}
+
+.explorar__lista-vacio {
+    padding: 1rem;
+    text-align: center;
+    color: var(--color-primary);
+    font-style: italic;
 }
 
 /* Contenido principal */
@@ -120,6 +172,7 @@
     background-color: var(--color-primary-light);
     border-radius: 8px;
     padding: 2rem;
+    text-align: center;
 }
 
 .explorar__vacio svg {
@@ -130,25 +183,7 @@
     opacity: 0.7;
 }
 
-/* Datos del punto */
-.explorar__datos-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-}
-
-.explorar__datos-header h3 {
-    color: var(--color-primary-dark);
-    font-size: 1.5rem;
-    margin: 0;
-}
-
-.explorar__acciones {
-    display: flex;
-    gap: 0.5rem;
-}
-
+/* Botones de acción */
 .btn-accion {
     display: flex;
     align-items: center;
@@ -159,7 +194,9 @@
     color: var(--color-primary);
     border: 1px solid var(--color-primary);
     cursor: pointer;
+    font-size: 0.9rem;
     transition: background-color 0.3s, transform 0.2s;
+    text-decoration: none;
 }
 
 .btn-accion svg {
@@ -182,6 +219,25 @@
 .btn-accion--eliminar:hover {
     background-color: var(--color-error);
     color: var(--color-white);
+}
+
+/* Detalle del punto */
+.explorar__datos-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.explorar__datos-header h3 {
+    color: var(--color-primary-dark);
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.explorar__acciones {
+    display: flex;
+    gap: 0.5rem;
 }
 
 /* Tarjeta de información */
@@ -226,6 +282,7 @@
 .explorar__valor {
     margin: 0;
     color: var(--color-primary-dark);
+    line-height: 1.5;
 }
 
 .explorar__mapa {
@@ -272,11 +329,7 @@
     padding-bottom: 0.5rem;
 }
 
-.formulario__textarea {
-    min-height: 100px;
-    resize: vertical;
-}
-
+/* Estilo para los grupos de respuestas - SIN el texto "Correcta" */
 .respuesta-edicion {
     display: flex;
     align-items: center;
@@ -284,51 +337,67 @@
 }
 
 .respuesta-edicion input[type="radio"] {
-    margin-right: 0.8rem;
+    margin-right: 0.5rem;
+    cursor: pointer;
+}
+
+.respuesta-edicion label {
+    display: none; /* Ocultar la palabra "Correcta" */
 }
 
 .respuesta-edicion input[type="text"] {
     flex: 1;
 }
 
-/* Botones */
-.btn-anterior,
-.btn-siguiente {
-    padding: 0.8rem 1.5rem;
+/* Mensaje flotante */
+.mensaje-flotante {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    padding: 1rem 1.5rem;
     border-radius: 4px;
-    font-family: var(--font-main);
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
-}
-
-.btn-anterior {
-    background-color: var(--color-white);
-    color: var(--color-primary);
-    border: 1px solid var(--color-primary);
-}
-
-.btn-siguiente {
-    background-color: var(--color-accent);
-    color: var(--color-white);
-    border: none;
-}
-
-.btn-siguiente:hover,
-.btn-anterior:hover {
-    background-color: var(--color-primary-dark);
-    color: var(--color-white);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px var(--color-shadow-strong);
-}
-
-.btn-anterior:hover {
     background-color: var(--color-primary);
+    color: var(--color-white);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s, transform 0.3s;
+    z-index: 1000;
+    max-width: 300px;
 }
 
-.btn-volver-inicio {
-    display: block;
-    margin: 1.5rem auto 0;
+.mensaje-flotante--visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.mensaje-flotante--success {
+    background-color: var(--color-success);
+}
+
+.mensaje-flotante--error {
+    background-color: var(--color-error);
+}
+
+.mensaje-flotante--info {
+    background-color: var(--color-info);
+}
+
+/* Contenedor de explorar con wrapper */
+.explorar-wrapper {
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0;
+}
+
+/* Contenedor para el botón volver al inicio */
+.explorar__footer {
+    position: relative;
+    text-align: center;
+    padding: 1rem;
+    margin-top: 1.5rem;
+    clear: both;
 }
 
 /* Responsividad */
@@ -346,13 +415,10 @@
         max-width: 100%;
     }
 
-    .formulario__grupo--botones {
-        flex-direction: column;
-        gap: 0.8rem;
-    }
-
-    .btn-anterior,
-    .btn-siguiente {
+    /* Ajuste del botón para móvil */
+    .btn-volver-inicio {
+        margin: 1rem auto;
         width: 100%;
+        max-width: 250px;
     }
 }

@@ -21,6 +21,45 @@ ipcMain.handle('guardar-json', async (_event, nombreArchivo: string, datos: any)
   return { ok: true };
 });
 
+// Añade estos manejadores si no los tienes ya
+// IPC handler para listar todos los archivos JSON en el directorio de datos
+ipcMain.handle('listar-jsons', async () => {
+  const directorioUsuario = app.getPath('userData');
+  try {
+    const archivos = await fs.readdir(directorioUsuario);
+    const archivosJson = archivos.filter(archivo => archivo.endsWith('.json'));
+    return { ok: true, archivos: archivosJson };
+  } catch (e) {
+    console.error('Error al listar archivos JSON:', e);
+    return { ok: false, error: String(e), archivos: [] };
+  }
+});
+
+// IPC handler para leer el contenido de un archivo JSON
+ipcMain.handle('leer-json', async (_event, nombreArchivo: string) => {
+  const ruta = path.join(app.getPath('userData'), nombreArchivo);
+  try {
+    const contenido = await fs.readFile(ruta, 'utf-8');
+    const datos = JSON.parse(contenido);
+    return { ok: true, datos };
+  } catch (e) {
+    console.error(`Error al leer ${nombreArchivo}:`, e);
+    return { ok: false, error: String(e), datos: [] };
+  }
+});
+
+// IPC handler para actualizar un archivo JSON completo
+ipcMain.handle('actualizar-json', async (_event, nombreArchivo: string, datos: any) => {
+  const ruta = path.join(app.getPath('userData'), nombreArchivo);
+  try {
+    await fs.writeFile(ruta, JSON.stringify(datos, null, 2), 'utf-8');
+    return { ok: true };
+  } catch (e) {
+    console.error(`Error al actualizar ${nombreArchivo}:`, e);
+    return { ok: false, error: String(e) };
+  }
+});
+
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
   app.quit();
@@ -63,5 +102,3 @@ app.on('activate', () => {
     createWindow();
   }
 });
-
-// Aquí puedes incluir el resto de tu código main process

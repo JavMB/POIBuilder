@@ -26,15 +26,33 @@ export class GestionPasos {
     }
 
     private inicializarBotones(): void {
+        // Añadir listener con delegación de eventos pero verificando contexto
         document.addEventListener('click', async (event) => {
             const target = event.target as HTMLElement;
-            if (target.classList.contains('btn-siguiente')) {
-                await this.cargarPaso(Direccion.Adelante);
-            }
-            if (target.classList.contains('btn-anterior')) {
-                await this.cargarPaso(Direccion.Atras);
+
+            // Verificar que NO estamos en la página de inicio
+            const esPaginaInicio = document.querySelector('.bienvenida');
+
+            // Solo procesar si no estamos en la página principal
+            if (!esPaginaInicio) {
+                if (target.classList.contains('btn-siguiente')) {
+                    await this.cargarPaso(Direccion.Adelante);
+                }
+                if (target.classList.contains('btn-anterior')) {
+                    // Si estamos en el primer paso, volver al index
+                    if (this.pasoActual === 0) {
+                        window.location.href = 'index.html';
+                    } else {
+                        await this.cargarPaso(Direccion.Atras);
+                    }
+                }
             }
         });
+    }
+
+    public async iniciarWizard(): Promise<void> {
+        // Iniciar el wizard desde el primer paso
+        await this.cargarPaso();
     }
 
     async cargarPaso(direccion?: Direccion): Promise<void> {
@@ -45,7 +63,7 @@ export class GestionPasos {
             this.pasoActual = 0;
             if (headerPasos) headerPasos.style.display = 'flex';
         }
-        // Si estamos retrocediendo
+        // Si estamos retrocediendo (ya no manejamos volver al index aquí, sino en inicializarBotones)
         else if (direccion === Direccion.Atras && this.pasoActual > 0) {
             this.pasoActual--;
         }
@@ -92,10 +110,20 @@ export class GestionPasos {
             if (this.pasoActual === 2) {
                 this.rellenarRevision();
             }
+
+            // Cambia el comportamiento del botón anterior en el primer paso
+            if (this.pasoActual === 0) {
+                const btnAnterior = contenedor.querySelector('.btn-anterior');
+                if (btnAnterior) {
+                    // Opcionalmente, puedes cambiar el texto para aclarar
+                    btnAnterior.textContent = 'Volver al inicio';
+                }
+            }
         }
 
         this.mostrarCirculoActivo(this.pasoActual);
     }
+
     private async recogerDatosFormulario(paso: number): Promise<void> {
         if (paso === 0) {
             // RECOGE EL NOMBRE AQUÍ
