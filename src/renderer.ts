@@ -19,7 +19,7 @@ import { cargarVista }        from './ui/CargarVista';
 /* ----------  Vista de inicio (bienvenida)  ---------- */
 export async function cargarBienvenida(): Promise<void> {
 
-    await cargarVista('/public/bienvenida.html');
+    await cargarVista('bienvenida.html');
 
     const headerPasos = document.querySelector('.header__pasos') as HTMLElement | null;
     if (headerPasos) headerPasos.style.display = 'none';
