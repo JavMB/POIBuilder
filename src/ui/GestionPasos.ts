@@ -156,7 +156,6 @@ export class GestionPasos {
     /** Valida que todos los datos requeridos estén presentes */
     private validarDatosCompletos(): boolean {
         const camposFaltantes: string[] = [];
-        
         // Validar paso 1
         if (!this.datos.nombre || this.datos.nombre.trim() === '') {
             camposFaltantes.push('Nombre');
@@ -166,8 +165,15 @@ export class GestionPasos {
         }
         if (!this.datos.coordenadas) {
             camposFaltantes.push('Ubicación en el mapa');
+        } else {
+            // Nueva validación: no permitir (0,0) ni localidad desconocida
+            if (
+                (this.datos.coordenadas.latitud === 0 && this.datos.coordenadas.longitud === 0) ||
+                !this.datos.localidad || this.datos.localidad.toLowerCase() === 'desconocido'
+            ) {
+                camposFaltantes.push('Selecciona una ubicación válida en el mapa');
+            }
         }
-        
         // Validar paso 2
         if (!this.datos.pregunta || this.datos.pregunta.trim() === '') {
             camposFaltantes.push('Pregunta');
@@ -215,6 +221,14 @@ export class GestionPasos {
             }
             if (!this.datos.coordenadas) {
                 camposFaltantes.push('Ubicación en el mapa');
+            } else {
+                // Nueva validación: no permitir (0,0) ni localidad desconocida
+                if (
+                    (this.datos.coordenadas.latitud === 0 && this.datos.coordenadas.longitud === 0) ||
+                    !this.datos.localidad || this.datos.localidad.toLowerCase() === 'desconocido'
+                ) {
+                    camposFaltantes.push('Selecciona una ubicación válida en el mapa');
+                }
             }
         }
         
