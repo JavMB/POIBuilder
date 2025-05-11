@@ -150,6 +150,18 @@ export class GestionExplorar {
 
             });
         }
+
+        // Botón subir a la nube
+        const btnSubirNube = document.getElementById('btn-subir-nube');
+        if (btnSubirNube) {
+            btnSubirNube.addEventListener('click', async () => {
+                if (this.puntoSeleccionado >= 0) {
+                    await this.subirPuntoAGitHub(this.puntosInteres[this.puntoSeleccionado]);
+                } else {
+                    this.mostrarMensaje('Selecciona un punto para subir a la nube', 'error');
+                }
+            });
+        }
     }
 
     /**
@@ -750,6 +762,66 @@ export class GestionExplorar {
             input.classList.remove('input-error');
             if (msg) msg.textContent = '';
         }, { once: true });
+    }
+
+    /**
+     * Sube el punto seleccionado a un repositorio de GitHub
+     * Integra la API de GitHub: solo tienes que poner tu token y repo.
+     */
+    private async subirPuntoAGitHub(punto: PuntoInteres): Promise<void> {
+        const ciudad = (punto.localidad || 'desconocido').toLowerCase().replace(/\s+/g, '_');
+        const nombreArchivo = `${ciudad}.json`;
+        const repo = 'JavMB/imagenes'; 
+        const token = ''; // <-- Pega aquí tu token personal de GitHub
+        const apiUrl = `https://api.github.com/repos/${repo}/contents/${ciudad}/${nombreArchivo}`;
+
+        // 1. Obtener el contenido actual del archivo (si existe)
+        let contenidoActual: PuntoInteres[] = [];
+        let sha = '';
+        try {
+            const res = await fetch(apiUrl, {
+                headers: { 'Authorization': `token ${token}` }
+            });
+            if (res.ok) {
+                const json = await res.json();
+                const decoded = atob(json.content.replace(/\n/g, ''));
+                contenidoActual = JSON.parse(decoded);
+                sha = json.sha;
+            }
+        } catch (e) {
+            // Si no existe, se crea nuevo
+            contenidoActual = [];
+        }
+
+        // 2. Añadir el nuevo punto al array
+        contenidoActual.push(punto);
+        const nuevoContenido = btoa(unescape(encodeURIComponent(JSON.stringify(contenidoActual, null, 2))));
+
+        // 3. Subir el archivo actualizado
+        const body = {
+            message: `Añadir punto desde app (${punto.nombre})`,
+            content: nuevoContenido,
+            ...(sha ? { sha } : {})
+        };
+
+        try {
+            const res = await fetch(apiUrl, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(body)
+            });
+            if (res.ok) {
+                this.mostrarMensaje('Punto subido correctamente a la nube (GitHub)', 'success');
+            } else {
+                const error = await res.json();
+                this.mostrarMensaje('Error al subir a GitHub: ' + (error.message || res.statusText), 'error');
+            }
+        } catch (e) {
+            this.mostrarMensaje('Error de red al subir a GitHub: ' + (e instanceof Error ? e.message : e), 'error');
+        }
     }
 
 }
