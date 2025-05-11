@@ -10,7 +10,11 @@ import { cargarBienvenida } from '../renderer';
 interface PuntoInteres {
     nombre: string;
     descripcion: string;
-    coordenadas: MapLocation;
+    coordenadas: {
+        latitud: number;
+        longitud: number;
+        nombre?: string; // Hacemos el nombre opcional para compatibilidad
+    };
     localidad: string;
     pregunta: string;
     respuestas: string[];
@@ -49,15 +53,8 @@ export class GestionExplorar {
             const response = await fetch('explorar.html');
             const html = await response.text();
 
-            // Crear un contenedor para toda la estructura
-            contenedor.innerHTML = `
-            <div class="explorar-wrapper">
-                ${html}
-                <div class="explorar__footer">
-                    <button class="btn-anterior btn-volver-inicio">Volver al inicio</button>
-                </div>
-            </div>
-        `;
+            // Usar solo el HTML original, sin añadir otro footer duplicado
+            contenedor.innerHTML = html;
 
             // Inicializar eventos y cargar datos
             this.inicializarEventos();
@@ -221,30 +218,93 @@ export class GestionExplorar {
             .join(' ');
     }
 
+    /** Muestra un mensaje flotante no bloqueante (tipo error o success) */
+    private mostrarMensaje(mensaje: string, tipo: 'error' | 'success' = 'error'): void {
+        this.agregarAnimacionCSS();
+        const notificacionAnterior = document.getElementById('mensaje-validacion');
+        if (notificacionAnterior) notificacionAnterior.remove();
+        const colorFondo = tipo === 'error' ? '#ffebee' : '#e8f5e9';
+        const colorBorde = tipo === 'error' ? 'var(--color-error)' : 'var(--color-success)';
+        const colorTitulo = tipo === 'error' ? 'var(--color-error)' : 'var(--color-success)';
+        const titulo = tipo === 'error' ? 'Error' : 'Operación completada';
+        const notificacion = document.createElement('div');
+        notificacion.id = 'mensaje-validacion';
+        notificacion.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            max-width: 350px;
+            background-color: ${colorFondo};
+            border-left: 4px solid ${colorBorde};
+            padding: 15px;
+            border-radius: 4px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+            z-index: 9999;
+            font-size: 14px;
+            animation: slideIn 0.3s ease-out;
+            font-family: var(--font-main);
+            backdrop-filter: blur(5px);
+        `;
+        const tituloElem = document.createElement('div');
+        tituloElem.style.cssText = `font-weight: bold; margin-bottom: 8px; display: flex; justify-content: space-between; color: ${colorTitulo};`;
+        tituloElem.innerHTML = `${titulo} <span style="cursor: pointer;">✕</span>`;
+        const contenido = document.createElement('div');
+        contenido.innerHTML = mensaje.replace(/\n/g, '<br>');
+        tituloElem.querySelector('span')?.addEventListener('click', () => {
+            notificacion.style.animation = 'fadeOut 0.3s forwards';
+            setTimeout(() => {
+                if (document.body.contains(notificacion)) notificacion.remove();
+            }, 300);
+        });
+        notificacion.appendChild(tituloElem);
+        notificacion.appendChild(contenido);
+        document.body.appendChild(notificacion);
+        setTimeout(() => {
+            if (document.body.contains(notificacion)) {
+                notificacion.style.animation = 'fadeOut 0.3s forwards';
+                setTimeout(() => notificacion.remove(), 300);
+            }
+        }, 8000);
+    }
+    private agregarAnimacionCSS(): void {
+        if (document.getElementById('mensaje-animacion-css')) return;
+        const styleEl = document.createElement('style');
+        styleEl.id = 'mensaje-animacion-css';
+        styleEl.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes fadeOut {
+                from { opacity: 1; }
+                to { opacity: 0; }
+            }
+        `;
+        document.head.appendChild(styleEl);
+    }
+
     /**
      * Procesa un archivo seleccionado por el usuario
      * @param file Archivo seleccionado
      */
     private async procesarArchivoSeleccionado(file: File): Promise<void> {
         if (!file.name.endsWith('.json')) {
-            alert('Por favor, selecciona un archivo JSON válido');
+            this.mostrarMensaje('Por favor, selecciona un archivo JSON válido', 'error');
             return;
         }
-
         try {
             const contenido = await this.leerArchivoComoTexto(file);
             const datos = JSON.parse(contenido);
-
             if (Array.isArray(datos)) {
                 this.puntosInteres = datos;
                 this.archivoActual = file.name;
                 this.mostrarContenidoArchivo();
             } else {
-                alert('El formato del archivo no es válido. Debe contener un array de puntos de interés.');
+                this.mostrarMensaje('El formato del archivo no es válido. Debe contener un array de puntos de interés.', 'error');
             }
         } catch (error) {
             console.error('Error al procesar el archivo:', error);
-            alert('Error al procesar el archivo. Asegúrate de que es un JSON válido.');
+            this.mostrarMensaje('Error al procesar el archivo. Asegúrate de que es un JSON válido.', 'error');
         }
     }
 
@@ -274,18 +334,17 @@ export class GestionExplorar {
         try {
             if (window.electronAPI) {
                 const result = await window.electronAPI.leerJson(nombreArchivo);
-
                 if (result.ok && result.datos) {
                     this.puntosInteres = result.datos;
                     this.archivoActual = nombreArchivo;
                     this.mostrarContenidoArchivo();
                 } else {
-                    alert('Error al cargar el archivo');
+                    this.mostrarMensaje('Error al cargar el archivo', 'error');
                 }
             }
         } catch (error) {
             console.error('Error al cargar archivo:', error);
-            alert('Error al cargar el archivo');
+            this.mostrarMensaje('Error al cargar el archivo', 'error');
         }
     }
 
@@ -294,12 +353,12 @@ export class GestionExplorar {
      */
     private mostrarContenidoArchivo(): void {
         if (this.puntosInteres.length === 0) {
-            alert('El archivo no contiene puntos de interés');
+            this.mostrarMensaje('El archivo no contiene puntos de interés', 'error');
             return;
         }
-
         // Mostrar el primer punto por defecto
         this.mostrarPunto(0);
+        this.mostrarListaPuntos();
     }
 
     /**
@@ -327,30 +386,43 @@ export class GestionExplorar {
         const preguntaElement = document.getElementById('punto-pregunta');
         const respuestasElement = document.getElementById('punto-respuestas');
 
-        if (nombreElement) nombreElement.textContent = punto.nombre;
-        if (descripcionElement) descripcionElement.textContent = punto.descripcion;
-        if (localidadElement) localidadElement.textContent = punto.localidad;
+        if (nombreElement) nombreElement.textContent = punto.nombre || 'Sin información';
+        if (descripcionElement) descripcionElement.textContent = punto.descripcion || 'Sin información';
+        if (localidadElement) localidadElement.textContent = punto.localidad || 'Sin información';
         if (coordenadasElement) {
-            coordenadasElement.textContent = `${punto.coordenadas.latitud.toFixed(5)}, ${punto.coordenadas.longitud.toFixed(5)}`;
+            if (punto.coordenadas && typeof punto.coordenadas.latitud === 'number' && typeof punto.coordenadas.longitud === 'number') {
+                coordenadasElement.textContent = `${punto.coordenadas.latitud.toFixed(5)}, ${punto.coordenadas.longitud.toFixed(5)}`;
+            } else {
+                coordenadasElement.textContent = 'Sin información';
+            }
         }
-        if (preguntaElement) preguntaElement.textContent = punto.pregunta;
+        if (preguntaElement) preguntaElement.textContent = punto.pregunta || 'Sin información';
 
         // Mostrar respuestas
         if (respuestasElement) {
             respuestasElement.innerHTML = '';
-            punto.respuestas.forEach((resp, idx) => {
+            if (Array.isArray(punto.respuestas) && punto.respuestas.length > 0) {
+                punto.respuestas.forEach((resp, idx) => {
+                    const li = document.createElement('li');
+                    li.textContent = resp || 'Sin información';
+                    if (idx === punto.correcta) {
+                        li.classList.add('correcta');
+                        li.textContent = `${resp || 'Sin información'} (Correcta)`;
+                    }
+                    respuestasElement.appendChild(li);
+                });
+            } else {
                 const li = document.createElement('li');
-                li.textContent = resp;
-                if (idx === punto.correcta) {
-                    li.classList.add('correcta');
-                    li.textContent = `${resp} (Correcta)`;
-                }
+                li.textContent = 'Sin respuestas';
                 respuestasElement.appendChild(li);
-            });
+            }
         }
 
-        // Inicializar mapa
-        this.inicializarMapa(punto.coordenadas.latitud, punto.coordenadas.longitud);
+        // Inicializar mapa solo si hay coordenadas válidas
+        if (punto.coordenadas && typeof punto.coordenadas.latitud === 'number' && typeof punto.coordenadas.longitud === 'number') {
+            this.inicializarMapa(punto.coordenadas.latitud, punto.coordenadas.longitud);
+        }
+        this.mostrarListaPuntos();
     }
 
     /**
@@ -475,7 +547,7 @@ export class GestionExplorar {
 
         // Validar
         if (!nombreInput.value.trim() || !descripcionInput.value.trim() || !preguntaInput.value.trim()) {
-            alert('Por favor, completa todos los campos obligatorios');
+            this.mostrarMensaje('Por favor, completa todos los campos obligatorios', 'error');
             return;
         }
 
@@ -486,15 +558,32 @@ export class GestionExplorar {
             const valor = (input as HTMLInputElement).value.trim();
             if (valor) {
                 respuestas.push(valor);
+            } else {
+                this.resaltarCampoConError(input as HTMLInputElement, 'Respuesta obligatoria');
             }
         });
 
         if (respuestas.length < 2) {
-            alert('Debe haber al menos 2 respuestas');
-            return;
+            const container = document.getElementById('edit-respuestas-container');
+            if (container) {
+                const msg = container.querySelector('.mensaje-error');
+                if (!msg) {
+                    const newMsg = document.createElement('div');
+                    newMsg.className = 'mensaje-error';
+                    container.appendChild(newMsg);
+                    newMsg.textContent = 'Debe haber al menos 2 respuestas';
+                } else {
+                    msg.textContent = 'Debe haber al menos 2 respuestas';
+                }
+            }
+        } else {
+            const container = document.getElementById('edit-respuestas-container');
+            if (container) {
+                const msg = container.querySelector('.mensaje-error');
+                if (msg) msg.textContent = '';
+            }
         }
 
-        // Obtener respuesta correcta
         const correctaInput = document.querySelector('input[name="correcta"]:checked') as HTMLInputElement;
         const correcta = correctaInput ? parseInt(correctaInput.value) : 0;
 
@@ -518,17 +607,18 @@ export class GestionExplorar {
             if (window.electronAPI) {
                 await window.electronAPI.actualizarJson(this.archivoActual, this.puntosInteres);
 
-                alert('Cambios guardados correctamente');
+                this.mostrarMensaje('Cambios guardados correctamente', 'success');
 
                 // Volver a la vista de datos
                 this.ocultarFormularioEdicion();
                 this.mostrarPunto(this.puntoSeleccionado);
+                this.mostrarListaPuntos();
             } else {
                 throw new Error('No se pudo acceder a electronAPI');
             }
         } catch (error) {
             console.error('Error al guardar cambios:', error);
-            alert('Error al guardar los cambios');
+            this.mostrarMensaje('Error al guardar los cambios', 'error');
         }
     }
 
@@ -541,9 +631,59 @@ export class GestionExplorar {
 
         const punto = this.puntosInteres[index];
 
-        if (confirm(`¿Estás seguro de que deseas eliminar el punto "${punto.nombre}"?`)) {
-            this.eliminarPunto(index);
-        }
+        // Popup de confirmación no bloqueante
+        this.mostrarMensajeConfirmacion(
+            `¿Estás seguro de que deseas eliminar el punto "${punto.nombre}"?`,
+            () => this.eliminarPunto(index)
+        );
+    }
+
+    private mostrarMensajeConfirmacion(mensaje: string, onConfirm: () => void): void {
+        this.agregarAnimacionCSS();
+        const notificacionAnterior = document.getElementById('mensaje-validacion');
+        if (notificacionAnterior) notificacionAnterior.remove();
+        const notificacion = document.createElement('div');
+        notificacion.id = 'mensaje-validacion';
+        notificacion.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            max-width: 350px;
+            background-color: #fffbe6;
+            border-left: 4px solid var(--color-warning, #fbc02d);
+            padding: 15px;
+            border-radius: 4px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+            z-index: 9999;
+            font-size: 14px;
+            animation: slideIn 0.3s ease-out;
+            font-family: var(--font-main);
+            backdrop-filter: blur(5px);
+        `;
+        const tituloElem = document.createElement('div');
+        tituloElem.style.cssText = `font-weight: bold; margin-bottom: 8px; color: var(--color-warning, #fbc02d);`;
+        tituloElem.textContent = 'Confirmar acción';
+        const contenido = document.createElement('div');
+        contenido.innerHTML = mensaje.replace(/\n/g, '<br>');
+        const botones = document.createElement('div');
+        botones.style.cssText = 'margin-top: 12px; display: flex; gap: 10px; justify-content: flex-end;';
+        const btnSi = document.createElement('button');
+        btnSi.textContent = 'Sí';
+        btnSi.style.cssText = 'background: var(--color-success); color: white; border: none; border-radius: 3px; padding: 5px 14px; cursor: pointer;';
+        const btnNo = document.createElement('button');
+        btnNo.textContent = 'No';
+        btnNo.style.cssText = 'background: var(--color-error); color: white; border: none; border-radius: 3px; padding: 5px 14px; cursor: pointer;';
+        btnSi.onclick = () => {
+            notificacion.remove();
+            onConfirm();
+        };
+        btnNo.onclick = () => notificacion.remove();
+        botones.appendChild(btnSi);
+        botones.appendChild(btnNo);
+        notificacion.appendChild(tituloElem);
+        notificacion.appendChild(contenido);
+        notificacion.appendChild(botones);
+        document.body.appendChild(notificacion);
     }
 
     /**
@@ -551,33 +691,65 @@ export class GestionExplorar {
      * @param index Índice del punto a eliminar
      */
     private async eliminarPunto(index: number): Promise<void> {
-        // Eliminar del array
         this.puntosInteres.splice(index, 1);
-
         try {
-            // Guardar cambios en el archivo
             if (window.electronAPI) {
                 await window.electronAPI.actualizarJson(this.archivoActual, this.puntosInteres);
-
-                alert('Punto eliminado correctamente');
-
-                // Mostrar otro punto o mensaje vacío
+                this.mostrarMensaje('Punto eliminado correctamente', 'success');
                 if (this.puntosInteres.length > 0) {
                     this.mostrarPunto(0);
+                    this.mostrarListaPuntos();
                 } else {
-                    // Mostrar mensaje de vacío
                     const contenidoVacio = document.getElementById('contenido-vacio');
                     const contenidoDatos = document.getElementById('contenido-datos');
-
                     if (contenidoVacio) contenidoVacio.style.display = 'flex';
                     if (contenidoDatos) contenidoDatos.style.display = 'none';
+                    this.mostrarListaPuntos();
                 }
             } else {
                 throw new Error('No se pudo acceder a electronAPI');
             }
         } catch (error) {
             console.error('Error al eliminar punto:', error);
-            alert('Error al eliminar el punto');
+            this.mostrarMensaje('Error al eliminar el punto', 'error');
         }
     }
+    /** Lista todos los puntos del archivo y permite seleccionarlos */
+    private mostrarListaPuntos(): void {
+        const lista = document.getElementById('puntos-list');
+        if (!lista) return;
+
+        lista.innerHTML = '';
+        this.puntosInteres.forEach((punto, idx) => {
+            const li = document.createElement('li');
+            li.textContent = punto.nombre || `Punto ${idx + 1}`;
+
+            // resaltar el seleccionado
+            if (idx === this.puntoSeleccionado) li.classList.add('active');
+
+            li.addEventListener('click', () => {
+                this.mostrarPunto(idx);
+            });
+
+            lista.appendChild(li);
+        });
+    }
+
+    /** Resalta un campo con error y muestra un mensaje debajo */
+    private resaltarCampoConError(input: HTMLElement, mensaje: string) {
+        input.classList.add('input-error');
+        let msg = input.parentElement?.querySelector('.mensaje-error');
+        if (!msg) {
+            msg = document.createElement('div');
+            msg.className = 'mensaje-error';
+            input.parentElement?.appendChild(msg);
+        }
+        msg.textContent = mensaje;
+        // Elimina el error al escribir
+        input.addEventListener('input', () => {
+            input.classList.remove('input-error');
+            if (msg) msg.textContent = '';
+        }, { once: true });
+    }
+
 }

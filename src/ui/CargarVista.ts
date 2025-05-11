@@ -1,4 +1,3 @@
-
 export async function cargarVista(ruta: string): Promise<void> {
     const contenedor = document.getElementById('contenido');
     if (!contenedor) throw new Error('Falta #contenido');

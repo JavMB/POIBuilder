@@ -1,255 +1,162 @@
+/* ------------------------------------------------------------------
+ *  MÓDULO  ▸  Mapa Leaflet + geocoder + marcador arrastrable
+ * -----------------------------------------------------------------*/
+
 import L from 'leaflet';
 import 'leaflet-control-geocoder';
 
-/**
- * Interfaz que define la estructura de un punto de interés en el mapa.
- * @property {string} nombre - Nombre descriptivo de la ubicación
- * @property {number} latitud - Coordenada de latitud
- * @property {number} longitud - Coordenada de longitud
- */
+/* ‑‑‑‑‑‑‑‑‑‑‑  Tipos públicos  ‑‑‑‑‑‑‑‑‑‑‑ */
+
 export interface MapLocation {
-    nombre: string;
+    nombre: string;   // nombre legible (“Jávea”)
     latitud: number;
     longitud: number;
 }
 
-/**
- * Almacena la ubicación actual seleccionada en el mapa.
- * Se inicializa con valores vacíos.
- */
-let currentMapLocation: MapLocation = {
+/* ‑‑‑‑‑‑‑‑‑‑‑  Estado interno  ‑‑‑‑‑‑‑‑‑‑‑ */
+
+let map: L.Map;                   // instancia de Leaflet
+let marker: L.Marker;             // marcador único y arrastrable
+let current: MapLocation = {      // última posición escogida
     nombre: '',
     latitud: 0,
     longitud: 0
 };
 
-/** Referencia al marcador actual en el mapa. Null si no hay ninguno. */
-let currentMarker: L.Marker | null = null;
-
-/** Instancia del mapa de Leaflet. */
-let map: L.Map;
+/* ==================================================================
+ *  API PÚBLICA
+ * ==================================================================*/
 
 /**
- * Inicializa el mapa con geolocalización y buscador.
- * Configura los listeners para eventos de clic en el mapa y búsqueda.
+ * Crea el mapa dentro de #map, coloca un marcador arrastrable
+ * y habilita el buscador + clic en el mapa.
  *
- * @returns {L.Map} Instancia del mapa creado
+ * Se debe llamar **una sola vez** por pantalla.
  */
 export function initMap(): L.Map {
-    // Centrado provisional en Madrid hasta geolocalización
     map = L.map('map', {
         zoomControl: true,
         attributionControl: false
-    }).setView([40.416775, -3.703790], 16); // Vista inicial con zoom 16
+    }).setView([40.4168, -3.7038], 16);           // Madrid por defecto
 
-    /**
-     * Añade la capa base de CartoDB estilo Voyager.
-     * Este estilo proporciona un fondo de mapa limpio y profesional.
-     */
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        subdomains: 'abcd',
-        maxZoom: 19,
-        tileSize: 256,
-        keepBuffer: 4,
-        updateWhenIdle: true,
-        updateWhenZooming: false,
-        crossOrigin: true
-    }).addTo(map);
-
-    /**
-     * Intenta geolocalizar al usuario si el navegador lo permite.
-     * Si tiene éxito, centra el mapa en la ubicación del usuario.
-     * Si falla, utiliza Madrid como ubicación predeterminada.
-     */
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const lat = position.coords.latitude;
-                const lng = position.coords.longitude;
-                // Colocar marcador y centrar vista en la ubicación del usuario con zoom 17
-                setOrMoveMarker(lat, lng, undefined, 17);
-            },
-            () => {
-                // Si falla, Madrid, con el zoom actual del mapa (inicialmente 16)
-                setOrMoveMarker(40.416775, -3.703790);
-            }
-        );
-    } else {
-        // Si no hay API de geolocalización, Madrid, con el zoom actual del mapa (inicialmente 16)
-        setOrMoveMarker(40.416775, -3.703790);
-    }
-
-    /**
-     * Añade el control de búsqueda (geocoder) al mapa.
-     * Permite al usuario buscar ubicaciones por nombre.
-     * Al seleccionar un resultado, mueve el mapa y el marcador a esa ubicación.
-     */
-    (L.Control as any).geocoder({
-        defaultMarkGeocode: false,
-        placeholder: 'Buscar sitio...',
-        errorMessage: 'No encontrado'
-    })
-        .on('markgeocode', function(e: any) {
-            const latlng = e.geocode.center;
-            // IMPORTANTE: Evitamos usar setView aquí para prevenir conflictos
-            // con la actualización de vista en setOrMoveMarker
-            setOrMoveMarker(latlng.lat, latlng.lng, e.geocode.name, 18); // Pasamos zoom 18
-        })
-        .addTo(map);
-
-    /**
-     * Configura el evento de clic en el mapa.
-     * Permite al usuario seleccionar una ubicación haciendo clic en cualquier punto.
-     */
-    map.on('click', (e: L.LeafletMouseEvent) => {
-        // Actualiza marcador usando el zoom actual del mapa
-        setOrMoveMarker(e.latlng.lat, e.latlng.lng);
-    });
+    añadirCapaBase();
+    crearMarcadorInicial();
+    geolocalizarUsuario();
+    activarGeocoder();
+    activarClicEnMapa();
 
     return map;
 }
 
-/**
- * Crea o mueve el marcador a la posición especificada.
- * Actualiza el estado interno y la vista del mapa.
- *
- * @param {number} lat - Latitud de la nueva posición
- * @param {number} lng - Longitud de la nueva posición
- * @param {string} [nombre] - Nombre opcional para la ubicación
- * @param {number} [newZoom] - Nivel de zoom opcional para la vista del mapa
- */
-function setOrMoveMarker(lat: number, lng: number, nombre?: string, newZoom?: number): void {
-    // Primero actualizamos los datos para evitar desincronización
-    updateAll(lat, lng, nombre);
-
-    // Si no existe un marcador, lo creamos con la posición dada
-    if (!currentMarker) {
-        currentMarker = L.marker([lat, lng], { draggable: true })
-            .addTo(map)
-            .bindPopup('Arrastra el marcador o haz clic en el mapa para ubicar el punto de interés')
-            .openPopup();
-
-        /**
-         * Configura el evento de arrastre para el marcador.
-         * Permite al usuario ajustar la ubicación arrastrando el marcador.
-         */
-        currentMarker.on('dragend', (event: L.LeafletEvent) => {
-            const marker = event.target as L.Marker;
-            const position = marker.getLatLng();
-            // Tras arrastrar, actualiza marcador y vista del mapa usando zoom actual
-            setOrMoveMarker(position.lat, position.lng);
-        });
-    } else {
-        // IMPORTANTE: Aseguramos que el marcador siempre esté visible en el mapa
-        // Soluciona el problema de que el marcador no siga al hacer búsquedas
-        if (!map.hasLayer(currentMarker)) {
-            currentMarker.addTo(map);
-        }
-        // Actualizamos la posición del marcador existente
-        currentMarker.setLatLng([lat, lng]);
-    }
-
-    // Centra la vista del mapa en la posición del marcador
-    // Usa newZoom si se proporciona, o mantiene el zoom actual
-    map.setView([lat, lng], newZoom !== undefined ? newZoom : map.getZoom());
-
-    // Aseguramos que el popup se actualice y se abra con la nueva información
-    if (currentMarker) {
-        currentMarker.bindPopup(
-            `Localización: ${nombre ? nombre + '<br>' : ''}${lat.toFixed(5)}, ${lng.toFixed(5)}`
-        ).openPopup();
-    }
+/** Devuelve la última ubicación elegida por el usuario. */
+export function getMapCoordinates(): MapLocation {
+    return current;
 }
 
-/**
- * Actualiza los datos de la ubicación seleccionada.
- *
- * @param {number} lat - Latitud de la ubicación
- * @param {number} lng - Longitud de la ubicación
- * @param {string} [nombre] - Nombre opcional para la ubicación
- */
-function updateAll(lat: number, lng: number, nombre?: string): void {
-    updateCurrentLocation(lat, lng, nombre);
+/* ==================================================================
+ *  Detalle interno
+ * ==================================================================*/
+
+function añadirCapaBase(): void {
+    L.tileLayer(
+        'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+        {subdomains: 'abcd', maxZoom: 19}
+    ).addTo(map);
 }
 
-/**
- * Actualiza el objeto con la ubicación y el nombre.
- * Si no se proporciona un nombre, intenta obtenerlo del input del formulario.
- *
- * @param {number} lat - Latitud de la ubicación
- * @param {number} lng - Longitud de la ubicación
- * @param {string} [nombre] - Nombre opcional para la ubicación
- */
-function updateCurrentLocation(lat: number, lng: number, nombre?: string): void {
+function crearMarcadorInicial(): void {
+    marker = L.marker(map.getCenter(), {draggable: true})
+        .addTo(map)
+        .bindPopup('Arrastra el marcador o busca una dirección')
+        .openPopup();
+
+    marker.on('dragend', () => {
+        const p = marker.getLatLng();
+        actualizarEstado(p.lat, p.lng);
+    });
+}
+
+function geolocalizarUsuario(): void {
+    if (!navigator.geolocation) return;
+
+    navigator.geolocation.getCurrentPosition(
+        (pos) => moverMarcador(pos.coords.latitude, pos.coords.longitude, undefined, 17),
+        (err) => console.warn('Geolocalización desactivada o denegada:', err)
+    );
+
+}
+
+function activarGeocoder(): void {
+    (L.Control as any).geocoder({
+        defaultMarkGeocode: false,
+        placeholder: 'Buscar sitio…',
+        errorMessage: 'No encontrado'
+    })
+        .on('markgeocode', (e: any) => {
+            const {lat, lng} = e.geocode.center;
+            moverMarcador(lat, lng, e.geocode.name, 18);
+        })
+        .addTo(map);
+}
+
+function activarClicEnMapa(): void {
+    map.on('click', (e: L.LeafletMouseEvent) => {
+        moverMarcador(e.latlng.lat, e.latlng.lng);
+    });
+}
+
+/* ------------------------------------------------------------------
+ *  moverMarcador()
+ * ------------------------------------------------------------------
+ *  - Re‑utiliza el mismo marker (performance)
+ *  - Actualiza estado + popup
+ *  - Centra el mapa (ajustando zoom opcionalmente)
+ * -----------------------------------------------------------------*/
+function moverMarcador(lat: number, lng: number, nombre?: string, nuevoZoom?: number): void {
+    marker.setLatLng([lat, lng]);
+
+    actualizarEstado(lat, lng, nombre);
+
+    marker.getPopup()
+        ?.setContent(`Localización: ${current.nombre}<br>${lat.toFixed(5)}, ${lng.toFixed(5)}`)
+        .openOn(map);
+
+    map.setView([lat, lng], nuevoZoom ?? map.getZoom());
+}
+
+/** Actualiza la variable `current` y (si procede) el input #coordenadas del paso 1 */
+function actualizarEstado(lat: number, lng: number, nombre?: string): void {
+    // nombre ⇢ “nombre” pasado || valor del input oculto || “Punto de interés”
     const nombreInput = document.getElementById('nombreLocalizacion') as HTMLInputElement | null;
-    const name = nombre || (nombreInput && nombreInput.value.trim() !== '' ? nombreInput.value : 'Punto de interés');
-    currentMapLocation = {
-        nombre: name,
+    current = {
+        nombre: nombre || nombreInput?.value.trim() || 'Punto de interés',
         latitud: lat,
         longitud: lng
     };
-    console.log(`Ubicación actualizada: ${name} en ${lat}, ${lng}`);
+
+    // si existe un input de coordenadas visible, lo rellenamos para feedback inmediato
+    const inpCoord = document.getElementById('coordenadas') as HTMLInputElement | null;
+    if (inpCoord) inpCoord.value = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
 }
 
-/**
- * Devuelve la ubicación actualmente seleccionada en el mapa.
- *
- * @returns {MapLocation} Objeto con los datos de la ubicación
- */
-export function getMapCoordinates(): MapLocation {
-    return currentMapLocation;
-}
+/* ==================================================================
+ *  Funciones auxiliares (geocodificación inversa externa)
+ * ==================================================================*/
 
 /**
- * Obtiene el nombre de la localidad (ciudad, pueblo, etc.) para unas coordenadas.
- * Utiliza el servicio de geocodificación inversa de Nominatim (OpenStreetMap).
- *
- * @async
- * @param {number} lat - Latitud de la ubicación
- * @param {number} lon - Longitud de la ubicación
- * @returns {Promise<string>} Nombre de la localidad o "desconocido" si no se encuentra
+ * Devuelve la localidad más probable para unas coordenadas usando Nominatim.
+ * Está desacoplada del resto del módulo∙ Se exporta porque la necesita el wizard.
  */
 export async function getLocalidadFromCoords(lat: number, lon: number): Promise<string> {
     try {
-        // Valida las coordenadas para asegurar que están dentro de rangos válidos
-        if (lat < -90 || lat > 90 || lon < -180 || lon > 180) {
-            throw new Error('Coordenadas inválidas');
-        }
-
-        // Construye la URL para la petición a Nominatim
         const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&accept-language=es`;
-        const response = await fetch(url, {
-            headers: {
-                'User-Agent': 'appeducativa javiermengual@live.com'
-            }
-        });
-
-        // Comprueba si la petición fue exitosa
-        if (!response.ok) {
-            throw new Error(`Error en la petición: ${response.status} ${response.statusText}`);
-        }
-
-        const data = await response.json();
-
-        // Verifica que los datos y la dirección existan
-        if (!data || !data.address) {
-            return "desconocido";
-        }
-
-        // Devuelve el primer campo de localidad disponible, en orden de preferencia
-        // Puedes ajustar este orden según tus necesidades
-        return (
-            data.address.city ||
-            data.address.town ||
-            data.address.village ||
-            data.address.hamlet ||
-            data.address.municipality ||
-            data.address.county ||
-            data.address.state ||
-            "desconocido"
-        );
-    } catch (error) {
-        console.error('Error al obtener la localidad:', error);
-        return "desconocido";
+        const r = await fetch(url, {headers: {'User-Agent': 'mapa-pdi-app'}});
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        const j = await r.json();
+        const ad = j.address ?? {};
+        return ad.city || ad.town || ad.village || ad.hamlet || ad.county || 'desconocido';
+    } catch (e) {
+        console.error('Nominatim error', e);
+        return 'desconocido';
     }
 }

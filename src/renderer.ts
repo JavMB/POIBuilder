@@ -26,9 +26,7 @@ export async function cargarBienvenida(): Promise<void> {
 
     document
         .querySelector('.btn-crear')
-        ?.addEventListener('click', async () => {
-            await new GestionPasos().iniciarWizard();
-        });
+        ?.addEventListener('click', () => new GestionPasos().iniciar());
 
     document
         .querySelector('.btn-soporte')

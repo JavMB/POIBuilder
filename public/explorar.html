@@ -2,32 +2,27 @@
     <h2 class="explorar__titulo">Explorar Puntos de Interés</h2>
 
     <div class="explorar__contenedor">
-        <div class="explorar__sidebar">
-            <div class="explorar__carga">
-                <h3>Seleccionar archivo</h3>
-                <div class="explorar__dropzone" id="dropzone">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="17 8 12 3 7 8"></polyline>
-                        <line x1="12" y1="3" x2="12" y2="15"></line>
-                    </svg>
-                    <p>Arrastra y suelta un archivo JSON aquí<br>o</p>
-                    <label for="fileInput" class="btn-cargar">Seleccionar archivo</label>
-                    <input type="file" id="fileInput" accept=".json" hidden>
-                </div>
-            </div>
-
+        <!-- ====== Sidebar ====== -->
+        <aside class="explorar__sidebar">
+            <!-- Archivos recientes (opcional) -->
             <div class="explorar__archivos">
                 <h3>Archivos recientes</h3>
-                <ul id="archivos-recientes" class="explorar__lista">
-                    <!-- Los archivos se cargarán dinámicamente -->
-                </ul>
+                <ul id="archivos-recientes" class="explorar__lista"></ul>
             </div>
-        </div>
 
-        <div class="explorar__contenido">
+            <!-- Lista de puntos cargados -->
+            <div class="explorar__puntos">
+                <h3>Puntos del archivo</h3>
+                <ul id="puntos-list" class="explorar__lista"></ul>
+            </div>
+        </aside>
+
+        <!-- ====== Contenido principal ====== -->
+        <main class="explorar__contenido">
+            <!-- Vista vacía -->
             <div class="explorar__vacio" id="contenido-vacio">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
                     <line x1="12" y1="8" x2="12" y2="12"></line>
                     <line x1="12" y1="16" x2="12.01" y2="16"></line>
@@ -35,25 +30,20 @@
                 <p>Selecciona un archivo para visualizar su contenido</p>
             </div>
 
-            <div class="explorar__datos" id="contenido-datos" style="display: none;">
+            <!-- Detalle de punto -->
+            <div class="explorar__datos" id="contenido-datos" style="display:none;">
                 <div class="explorar__datos-header">
                     <h3 id="punto-nombre">Nombre del punto</h3>
+
                     <div class="explorar__acciones">
-                        <button id="btn-editar" class="btn-accion">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                            </svg>
-                            Editar
-                        </button>
-                        <button id="btn-eliminar" class="btn-accion btn-accion--eliminar">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="3 6 5 6 21 6"></polyline>
-                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                <line x1="10" y1="11" x2="10" y2="17"></line>
-                                <line x1="14" y1="11" x2="14" y2="17"></line>
-                            </svg>
-                            Eliminar
+                        <button id="btn-prev"  class="btn-accion">⟵ Anterior</button>
+                        <button id="btn-next"  class="btn-accion">Siguiente ⟶</button>
+                        <button id="btn-editar" class="btn-accion">Editar</button>
+                        <button id="btn-eliminar"
+                                class="btn-accion btn-accion--eliminar">Eliminar</button>
+                        <button id="btn-subir-nube" class="btn-accion" title="Subir este punto a la nube (GitHub)">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="vertical-align:middle;margin-right:4px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5-5m0 0l5 5m-5-5v12"/></svg>
+                            Subir a la nube
                         </button>
                     </div>
                 </div>
@@ -94,8 +84,8 @@
                 </div>
             </div>
 
-            <!-- Formulario de edición (inicialmente oculto) -->
-            <div class="explorar__edicion" id="formulario-edicion" style="display: none;">
+            <!-- Formulario de edición -->
+            <div class="explorar__edicion" id="formulario-edicion" style="display:none;">
                 <h3>Editar punto de interés</h3>
                 <form id="form-edicion">
                     <div class="formulario__grupo">
@@ -105,7 +95,8 @@
 
                     <div class="formulario__grupo">
                         <label for="edit-descripcion" class="formulario__label">Descripción:</label>
-                        <textarea id="edit-descripcion" class="formulario__input formulario__textarea" required></textarea>
+                        <textarea id="edit-descripcion"
+                                  class="formulario__input formulario__textarea" required></textarea>
                     </div>
 
                     <div class="formulario__grupo">
@@ -113,9 +104,7 @@
                         <input type="text" id="edit-pregunta" class="formulario__input" required>
                     </div>
 
-                    <div id="edit-respuestas-container">
-                        <!-- Las respuestas se generarán dinámicamente -->
-                    </div>
+                    <div id="edit-respuestas-container"><!-- dinámico --></div>
 
                     <div class="formulario__grupo formulario__grupo--botones">
                         <button type="button" id="btn-cancelar" class="btn-anterior">Cancelar</button>
@@ -123,6 +112,10 @@
                     </div>
                 </form>
             </div>
-        </div>
+        </main>
+    </div>
+
+    <div class="explorar__footer">
+        <button class="btn-volver-inicio btn-anterior">Volver al inicio</button>
     </div>
 </section>

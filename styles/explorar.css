@@ -1,424 +1,128 @@
-/* Estilos para la sección de explorar */
-.explorar {
-    background-color: var(--color-white);
-    border-radius: 8px;
-    box-shadow: 0 4px 12px var(--color-shadow);
-    max-width: 1200px;
-    margin: 2rem auto;
-    padding: 2rem;
-    position: relative;
+/* Pega todo esto en tu CSS (o impórtalo) */
+.explorar{
+    background:var(--color-white);
+    border-radius:8px;
+    box-shadow:0 4px 12px var(--color-shadow);
+    max-width:1200px;margin:2rem auto;padding:2rem;position:relative;
+}
+.explorar__titulo{
+    color:var(--color-primary-dark);font-family:var(--font-headings);font-size:1.8rem;
+    margin-bottom:1.5rem;border-bottom:2px solid var(--color-primary-light);
+    padding-bottom:.5rem;text-align:center;
 }
 
-.explorar__titulo {
-    color: var(--color-primary-dark);
-    font-family: var(--font-headings);
-    font-size: 1.8rem;
-    margin-bottom: 1.5rem;
-    border-bottom: 2px solid var(--color-primary-light);
-    padding-bottom: 0.5rem;
-    text-align: center;
-}
+/* ---------- Layout ---------- */
+.explorar__contenedor{display:flex;gap:1.5rem;margin-bottom:2rem;}
+.explorar__sidebar{flex:1;max-width:300px;}
+.explorar__sidebar h3{color:var(--color-primary-dark);font-size:1.2rem;margin-bottom:1rem;}
+.explorar__puntos{margin-top:2rem;}
 
-.explorar__contenedor {
-    display: flex;
-    gap: 1.5rem;
-    margin-bottom: 2rem; /* Espacio para el botón */
+/* ---------- Listas reutilizables ---------- */
+.explorar__lista{
+    list-style:none;padding:0;margin:0;border:1px solid var(--color-border);
+    border-radius:8px;overflow:hidden;
 }
-
-/* Botón Volver al inicio */
-.btn-volver-inicio {
-    display: block;
-    width: fit-content;
-    margin: 0 auto;
-    padding: 0.7rem 1.5rem;
-    background-color: var(--color-primary-light);
-    color: var(--color-primary);
-    border: 1px solid var(--color-primary);
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: background-color 0.3s, transform 0.2s;
-    position: relative;
-    z-index: 10;
+.explorar__lista li{
+    padding:.8rem;border-bottom:1px solid var(--color-border);
+    cursor:pointer;transition:background-color .3s;
 }
-
-/* Quitar márgenes que causan espacio adicional */
-button.btn-volver-inicio {
-    margin-top: 0;
-    margin-bottom: 0;
+.explorar__lista li:last-child{border-bottom:none;}
+.explorar__lista li:hover{background:var(--color-primary-light);}
+.explorar__lista li.active{
+    background:var(--color-primary-light);border-left:3px solid var(--color-primary);
+    font-weight:600;
 }
+.explorar__lista-vacio{padding:1rem;text-align:center;color:var(--color-primary);font-style:italic;}
 
-.btn-volver-inicio:hover {
-    background-color: var(--color-primary);
+/* ---------- Contenido principal ---------- */
+.explorar__contenido{flex:3;min-height:500px;position:relative;}
+.explorar__vacio{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    height:100%;min-height:400px;color:var(--color-primary);
+    background:var(--color-primary-light);border-radius:8px;padding:2rem;text-align:center;
+}
+.explorar__vacio svg{width:64px;height:64px;color:var(--color-primary);margin-bottom:1rem;opacity:.7;}
+
+/* ---------- Botones ---------- */
+.btn-accion{
+    display:flex;align-items:center;gap:.5rem;padding:.5rem 1rem;border-radius:4px;
+    background:var(--color-primary-light);color:var(--color-primary);
+    border:1px solid var(--color-primary);cursor:pointer;font-size:.9rem;
+    transition:background-color .3s,transform .2s;
+}
+.btn-accion:hover{background:var(--color-primary);color:var(--color-white);transform:translateY(-2px);}
+.btn-accion--eliminar{
+    background:rgba(255,111,111,.1);color:var(--color-error);border-color:var(--color-error);
+}
+.btn-accion--eliminar:hover{background:var(--color-error);color:var(--color-white);}
+.btn-accion--nube {
+    background: var(--color-accent, #48cae4);
+    color: var(--color-white);
+    border: 1px solid var(--color-accent, #48cae4);
+}
+.btn-accion--nube:hover {
+    background: var(--color-accent-dark, #0096c7);
     color: var(--color-white);
     transform: translateY(-2px);
 }
 
-/* Contenedor adicional para el botón */
-.explorar__botonera {
-    text-align: center;
-    margin-top: 2rem;
+/* ---------- Detalle de punto ---------- */
+.explorar__datos-header{
+    display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;
+}
+.explorar__datos-header h3{color:var(--color-primary-dark);font-size:1.5rem;margin:0;}
+.explorar__acciones{display:flex;gap:.5rem;}
+
+.explorar__tarjeta{
+    background:var(--color-white);border-radius:8px;
+    box-shadow:0 2px 8px var(--color-shadow);overflow:hidden;
+}
+.explorar__seccion{padding:1.5rem;border-bottom:1px solid var(--color-border);}
+.explorar__seccion:last-child{border-bottom:none;}
+.explorar__seccion h4{
+    color:var(--color-primary-dark);margin:0 0 1rem;font-size:1.1rem;
+}
+.explorar__campo{margin-bottom:1rem;}
+.explorar__etiqueta{display:block;font-weight:600;color:var(--color-primary);margin-bottom:.3rem;}
+
+.explorar__mapa{height:200px;border-radius:4px;margin-bottom:1rem;background:var(--color-primary-light);}
+
+.explorar__lista-respuestas{list-style:none;padding:0;margin:0;}
+.explorar__lista-respuestas li{
+    padding:.5rem .8rem;margin-bottom:.5rem;background:var(--color-primary-light);
+    border-radius:4px;font-size:.95rem;
+}
+.explorar__lista-respuestas li.correcta{
+    background:rgba(72,202,228,.2);border-left:3px solid var(--color-success);font-weight:600;
 }
 
-/* Sidebar */
-.explorar__sidebar {
-    flex: 1;
-    max-width: 300px;
+/* ---------- Formulario de edición ---------- */
+.explorar__edicion{
+    background:var(--color-white);border-radius:8px;
+    box-shadow:0 2px 8px var(--color-shadow);padding:1.5rem;
 }
-
-.explorar__sidebar h3 {
-    color: var(--color-primary-dark);
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
+.explorar__edicion h3{
+    color:var(--color-primary-dark);margin:0 0 1.5rem;font-size:1.3rem;
+    border-bottom:1px solid var(--color-border);padding-bottom:.5rem;
 }
+.respuesta-edicion{display:flex;align-items:center;margin-bottom:.8rem;}
+.respuesta-edicion input[type="radio"]{margin-right:.5rem;cursor:pointer;}
+.respuesta-edicion input[type="text"]{flex:1;}
 
-/* Dropzone para archivos */
-.explorar__dropzone {
-    border: 2px dashed var(--color-border);
-    border-radius: 8px;
-    padding: 1.5rem;
-    text-align: center;
-    margin-bottom: 1.5rem;
-    transition: background-color 0.3s, border-color 0.3s;
-    cursor: pointer;
+/* ---------- Botón Volver ---------- */
+.btn-volver-inicio{
+    display:block;width:fit-content;margin:0 auto;padding:.7rem 1.5rem;
+    background:var(--color-primary-light);color:var(--color-primary);
+    border:1px solid var(--color-primary);border-radius:4px;cursor:pointer;font-weight:600;
+    transition:background-color .3s,transform .2s;
 }
+.btn-volver-inicio:hover{background:var(--color-primary);color:var(--color-white);transform:translateY(-2px);}
+.explorar__footer{text-align:center;padding:1rem 0 0;clear:both;}
 
-.explorar__dropzone:hover,
-.explorar__dropzone--active {
-    background-color: var(--color-primary-light);
-    border-color: var(--color-accent);
-}
-
-.explorar__dropzone svg {
-    width: 48px;
-    height: 48px;
-    color: var(--color-primary);
-    margin-bottom: 1rem;
-}
-
-.explorar__dropzone p {
-    color: var(--color-primary);
-    margin-bottom: 1rem;
-}
-
-.btn-cargar {
-    display: inline-block;
-    background-color: var(--color-primary);
-    color: var(--color-white);
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: background-color 0.3s;
-}
-
-.btn-cargar:hover {
-    background-color: var(--color-primary-dark);
-}
-
-/* Lista de archivos */
-.explorar__lista {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    border: 1px solid var(--color-border);
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-.explorar__lista li {
-    padding: 0.8rem;
-    border-bottom: 1px solid var(--color-border);
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.explorar__lista li:last-child {
-    border-bottom: none;
-}
-
-.explorar__lista li:hover {
-    background-color: var(--color-primary-light);
-}
-
-.explorar__lista li.active {
-    background-color: var(--color-primary-light);
-    border-left: 3px solid var(--color-primary);
-    font-weight: 600;
-}
-
-.explorar__lista-vacio {
-    padding: 1rem;
-    text-align: center;
-    color: var(--color-primary);
-    font-style: italic;
-}
-
-/* Contenido principal */
-.explorar__contenido {
-    flex: 3;
-    min-height: 500px;
-    position: relative;
-}
-
-.explorar__vacio {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    min-height: 400px;
-    color: var(--color-primary);
-    background-color: var(--color-primary-light);
-    border-radius: 8px;
-    padding: 2rem;
-    text-align: center;
-}
-
-.explorar__vacio svg {
-    width: 64px;
-    height: 64px;
-    color: var(--color-primary);
-    margin-bottom: 1rem;
-    opacity: 0.7;
-}
-
-/* Botones de acción */
-.btn-accion {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    background-color: var(--color-primary-light);
-    color: var(--color-primary);
-    border: 1px solid var(--color-primary);
-    cursor: pointer;
-    font-size: 0.9rem;
-    transition: background-color 0.3s, transform 0.2s;
-    text-decoration: none;
-}
-
-.btn-accion svg {
-    width: 16px;
-    height: 16px;
-}
-
-.btn-accion:hover {
-    background-color: var(--color-primary);
-    color: var(--color-white);
-    transform: translateY(-2px);
-}
-
-.btn-accion--eliminar {
-    background-color: rgba(255, 111, 111, 0.1);
-    color: var(--color-error);
-    border-color: var(--color-error);
-}
-
-.btn-accion--eliminar:hover {
-    background-color: var(--color-error);
-    color: var(--color-white);
-}
-
-/* Detalle del punto */
-.explorar__datos-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-}
-
-.explorar__datos-header h3 {
-    color: var(--color-primary-dark);
-    font-size: 1.5rem;
-    margin: 0;
-}
-
-.explorar__acciones {
-    display: flex;
-    gap: 0.5rem;
-}
-
-/* Tarjeta de información */
-.explorar__tarjeta {
-    background-color: var(--color-white);
-    border-radius: 8px;
-    box-shadow: 0 2px 8px var(--color-shadow);
-    overflow: hidden;
-}
-
-.explorar__seccion {
-    padding: 1.5rem;
-    border-bottom: 1px solid var(--color-border);
-}
-
-.explorar__seccion:last-child {
-    border-bottom: none;
-}
-
-.explorar__seccion h4 {
-    color: var(--color-primary-dark);
-    margin-top: 0;
-    margin-bottom: 1rem;
-    font-size: 1.1rem;
-}
-
-.explorar__campo {
-    margin-bottom: 1rem;
-}
-
-.explorar__campo:last-child {
-    margin-bottom: 0;
-}
-
-.explorar__etiqueta {
-    display: block;
-    font-weight: 600;
-    color: var(--color-primary);
-    margin-bottom: 0.3rem;
-}
-
-.explorar__valor {
-    margin: 0;
-    color: var(--color-primary-dark);
-    line-height: 1.5;
-}
-
-.explorar__mapa {
-    height: 200px;
-    border-radius: 4px;
-    margin-bottom: 1rem;
-    background-color: var(--color-primary-light);
-}
-
-.explorar__lista-respuestas {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.explorar__lista-respuestas li {
-    padding: 0.5rem 0.8rem;
-    margin-bottom: 0.5rem;
-    background-color: var(--color-primary-light);
-    border-radius: 4px;
-    font-size: 0.95rem;
-}
-
-.explorar__lista-respuestas li.correcta {
-    background-color: rgba(72, 202, 228, 0.2);
-    border-left: 3px solid var(--color-success);
-    font-weight: 600;
-}
-
-/* Formulario de edición */
-.explorar__edicion {
-    background-color: var(--color-white);
-    border-radius: 8px;
-    box-shadow: 0 2px 8px var(--color-shadow);
-    padding: 1.5rem;
-}
-
-.explorar__edicion h3 {
-    color: var(--color-primary-dark);
-    margin-top: 0;
-    margin-bottom: 1.5rem;
-    font-size: 1.3rem;
-    border-bottom: 1px solid var(--color-border);
-    padding-bottom: 0.5rem;
-}
-
-/* Estilo para los grupos de respuestas - SIN el texto "Correcta" */
-.respuesta-edicion {
-    display: flex;
-    align-items: center;
-    margin-bottom: 0.8rem;
-}
-
-.respuesta-edicion input[type="radio"] {
-    margin-right: 0.5rem;
-    cursor: pointer;
-}
-
-.respuesta-edicion label {
-    display: none; /* Ocultar la palabra "Correcta" */
-}
-
-.respuesta-edicion input[type="text"] {
-    flex: 1;
-}
-
-/* Mensaje flotante */
-.mensaje-flotante {
-    position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    padding: 1rem 1.5rem;
-    border-radius: 4px;
-    background-color: var(--color-primary);
-    color: var(--color-white);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.3s, transform 0.3s;
-    z-index: 1000;
-    max-width: 300px;
-}
-
-.mensaje-flotante--visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.mensaje-flotante--success {
-    background-color: var(--color-success);
-}
-
-.mensaje-flotante--error {
-    background-color: var(--color-error);
-}
-
-.mensaje-flotante--info {
-    background-color: var(--color-info);
-}
-
-/* Contenedor de explorar con wrapper */
-.explorar-wrapper {
-    position: relative;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0;
-}
-
-/* Contenedor para el botón volver al inicio */
-.explorar__footer {
-    position: relative;
-    text-align: center;
-    padding: 1rem;
-    margin-top: 1.5rem;
-    clear: both;
-}
-
-/* Responsividad */
-@media (max-width: 768px) {
-    .explorar {
-        padding: 1rem;
-        margin: 1rem;
-    }
-
-    .explorar__contenedor {
-        flex-direction: column;
-    }
-
-    .explorar__sidebar {
-        max-width: 100%;
-    }
-
-    /* Ajuste del botón para móvil */
-    .btn-volver-inicio {
-        margin: 1rem auto;
-        width: 100%;
-        max-width: 250px;
-    }
+/* ---------- Responsive ---------- */
+@media (max-width:768px){
+    .explorar{padding:1rem;margin:1rem;}
+    .explorar__contenedor{flex-direction:column;}
+    .explorar__sidebar{max-width:100%;}
+    .btn-volver-inicio{margin-top:1rem;width:100%;max-width:250px;}
 }
