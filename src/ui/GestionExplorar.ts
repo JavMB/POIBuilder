@@ -771,7 +771,7 @@ export class GestionExplorar {
     private async subirPuntoAGitHub(punto: PuntoInteres): Promise<void> {
         const ciudad = (punto.localidad || 'desconocido').toLowerCase().replace(/\s+/g, '_');
         const nombreArchivo = `${ciudad}.json`;
-        const repo = 'JavMB/imagenes'; 
+        const repo = 'JavMB/imagenes';
         const token = ''; // <-- Pega aquí tu token personal de GitHub
         const apiUrl = `https://api.github.com/repos/${repo}/contents/${ciudad}/${nombreArchivo}`;
 
