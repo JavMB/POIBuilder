@@ -126,6 +126,14 @@
     gap: 1rem;
 }
 
+.btn-anterior,
+.btn-siguiente {
+    width: 48%;
+    min-width: 120px;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
 /* ======================== */
 /* MAPA */
 /* ======================== */
@@ -199,6 +207,8 @@
 
     .btn-anterior,
     .btn-siguiente {
-        width: 100%;
+        width: auto;
+        min-width: 120px;
+        max-width: 100%;
     }
 }

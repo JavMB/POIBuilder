@@ -10,7 +10,7 @@ const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
     name: "puntos-interes",
-    executableName: "Puntos de Interés",
+    executableName: "puntos-interes",
   },
   rebuildConfig: {},
   makers: [new MakerSquirrel({}), new MakerZIP({}, ['darwin']), new MakerDeb({})],
