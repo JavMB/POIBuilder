@@ -1,4 +1,4 @@
-# POI Builder - Herramienta de Creación de Puntos de Interés
+# POI Builder 
 
 ## Descripción del Proyecto
 
