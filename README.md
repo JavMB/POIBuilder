@@ -20,13 +20,6 @@ POI Builder es una aplicación de escritorio desarrollada con Electron y TypeScr
 
 
 
-
-## Objetivo del Proyecto
-
-Crear un juego interactivo para móviles que permita a grupos de estudiantes descubrir lugares emblemáticos, históricos o curiosos de un pueblo (iglesias, pozos, ermitas, árboles singulares, etc.) respondiendo a preguntas tipo test en cada localización.
-
-El proyecto fomenta el aprendizaje activo, el trabajo en equipo y la gamificación del conocimiento geográfico e histórico local.
-
 ## Arquitectura del Proyecto Completo
 
 El proyecto se divide en tres fases principales:
