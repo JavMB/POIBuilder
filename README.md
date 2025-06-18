@@ -148,22 +148,4 @@ Este proyecto representa mi primera incursión seria en TypeScript, viniendo de 
 - **Diseño responsive**: Consideración de diferentes tamaños de pantalla
 - **Experiencia de usuario**: Interfaz intuitiva para usuarios no técnicos
 
-## Resultados Esperados
 
-- **Herramienta funcional** para crear contenidos turísticos-educativos locales
-- **Juego real** que los alumnos de la ESO puedan usar con sus móviles
-- **Material reutilizable** y escalable a cualquier municipio
-- **Base sólida** para futuros desarrollos educativos
-
-## Áreas de Mejora
-
-Como parte del proceso de aprendizaje, hay varios aspectos que podrían mejorarse en futuras iteraciones:
-
-- Implementación de tests unitarios
-- Mejor manejo de errores y validaciones
-- Optimización del rendimiento
-- Implementación de un sistema de plugins
-- Mejora de la accesibilidad
-
-
-*Este proyecto fue desarrollado como parte de un programa educativo, representando una exploración práctica de tecnologías web modernas y desarrollo de aplicaciones de escritorio.*
