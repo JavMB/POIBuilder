@@ -1,1 +1,159 @@
-![img](./desktop.png)
+# POI Builder - Herramienta de Creación de Puntos de Interés
+
+## Descripción del Proyecto
+
+POI Builder es una aplicación de escritorio desarrollada con Electron y TypeScript que permite a funcionarios y personal de ayuntamientos crear y gestionar puntos de interés (POI) para juegos educativos móviles. Esta herramienta forma parte de un proyecto más amplio cuyo objetivo es crear experiencias interactivas para que grupos de estudiantes descubran lugares emblemáticos, históricos o curiosos de sus pueblos.
+
+## Objetivo del Proyecto
+
+Crear un juego interactivo para móviles que permita a grupos de estudiantes descubrir lugares emblemáticos, históricos o curiosos de un pueblo (iglesias, pozos, ermitas, árboles singulares, etc.) respondiendo a preguntas tipo test en cada localización.
+
+El proyecto fomenta el aprendizaje activo, el trabajo en equipo y la gamificación del conocimiento geográfico e histórico local.
+
+## Arquitectura del Proyecto Completo
+
+El proyecto se divide en tres fases principales:
+
+### 1. Aplicación de Escritorio con Electron (Esta aplicación)
+**Responsables:** Alumnos de DAM
+
+**Funcionalidades:**
+- Seleccionar pueblo o zona
+- Crear marcadores (puntos de interés) con:
+  - Título del lugar
+  - Descripción breve
+  - 1 pregunta tipo test (4 respuestas y solo una correcta)
+  - Coordenadas del lugar (seleccionables en mapa o introducción manual)
+- Visualización de los puntos en un mapa interactivo
+- Edición y eliminación de marcadores existentes
+- Exportación del fichero como `nombrepueblo.json`
+- Gestión de múltiples pueblos (Javea, Denia, etc.)
+
+### 2. Repositorio de JSONs en GitHub
+Almacenamiento público de los ficheros `.json` generados, accesibles vía URL para dispositivos móviles.
+
+### 3. Web Móvil para el Juego
+Aplicación web responsive donde los estudiantes pueden seleccionar pueblos, visualizar puntos en mapa y responder preguntas.
+
+## Tecnologías Utilizadas
+
+- **Electron Forge** - Framework para aplicaciones de escritorio
+- **TypeScript** - Lenguaje de programación principal
+- **HTML/CSS/JavaScript** - Tecnologías web base
+- **Leaflet** - Librería de mapas interactivos
+- **OpenStreetMap** - Proveedor de mapas
+- **Node.js** - Entorno de ejecución
+
+## Estructura del Proyecto
+
+```
+POIBuilder/
+├── src/
+│   ├── main.ts          # Proceso principal de Electron
+│   ├── preload.ts       # Script de precarga
+│   ├── renderer.ts      # Proceso de renderizado
+│   └── ui/              # Módulos de interfaz de usuario
+│       ├── CargarVista.ts
+│       ├── Contacto.ts
+│       ├── GestionExplorar.ts
+│       ├── GestionPasos.ts
+│       └── Map.ts
+├── public/              # Páginas HTML
+│   ├── bienvenida.html
+│   ├── contacto.html
+│   ├── explorar.html
+│   ├── paso1.html
+│   ├── paso2.html
+│   └── paso3.html
+├── styles/              # Hojas de estilo CSS modulares
+│   ├── global.css
+│   ├── header.css
+│   └── [componente].css
+└── package.json
+```
+
+## Instalación y Configuración
+
+### Prerrequisitos
+- Node.js (versión 16 o superior)
+- npm o yarn
+
+### Pasos de instalación
+
+1. Clona el repositorio:
+```bash
+git clone [URL_DEL_REPOSITORIO]
+cd POIBuilder
+```
+
+2. Instala las dependencias:
+```bash
+npm install
+```
+
+3. Ejecuta la aplicación en modo desarrollo:
+```bash
+npm start
+```
+
+4. Para construir la aplicación:
+```bash
+npm run make
+```
+
+## Características Técnicas
+
+### Arquitectura de Componentes
+La aplicación está estructurada en módulos reutilizables siguiendo principios de separación de responsabilidades:
+
+- **Gestión de vistas**: Navegación entre diferentes pantallas
+- **Gestión de mapas**: Integración con Leaflet para mapas interactivos
+- **Gestión de datos**: Creación y manipulación de POIs
+- **Exportación**: Generación de archivos JSON estructurados
+
+### Metodología CSS
+- **BEM (Block Element Modifier)**: Convención de nomenclatura para CSS
+- **CSS Modular**: Archivos separados por componente
+- **Paleta de colores consistente**: Diseño visual cohesivo
+
+### Manejo de Estado
+- Gestión local de datos de POIs
+- Persistencia mediante archivos JSON
+- Interfaz reactiva a cambios de estado
+
+## Experiencia de Desarrollo
+
+Este proyecto representa mi primera incursión seria en TypeScript, viniendo de un background en Java. La transición desde un lenguaje fuertemente tipado como Java a JavaScript, y posteriormente a TypeScript, presentó desafíos interesantes:
+
+### Aprendizajes Clave
+- **TypeScript**: Aprovechamiento del sistema de tipos para mayor robustez
+- **Electron**: Comprensión de la arquitectura de procesos múltiples
+- **Desarrollo sin framework**: Creación de componentes modulares en JavaScript vanilla
+- **CSS avanzado**: Implementación de metodologías como BEM
+- **Mapas web**: Integración de librerías de mapas interactivos
+
+### Decisiones de Diseño
+- **Modularización**: A pesar de no usar un framework como React o Vue, la aplicación está estructurada en módulos reutilizables
+- **Separación de responsabilidades**: Cada componente tiene una función específica
+- **Diseño responsive**: Consideración de diferentes tamaños de pantalla
+- **Experiencia de usuario**: Interfaz intuitiva para usuarios no técnicos
+
+## Resultados Esperados
+
+- **Herramienta funcional** para crear contenidos turísticos-educativos locales
+- **Juego real** que los alumnos de la ESO puedan usar con sus móviles
+- **Material reutilizable** y escalable a cualquier municipio
+- **Base sólida** para futuros desarrollos educativos
+
+## Áreas de Mejora
+
+Como parte del proceso de aprendizaje, hay varios aspectos que podrían mejorarse en futuras iteraciones:
+
+- Implementación de tests unitarios
+- Mejor manejo de errores y validaciones
+- Optimización del rendimiento
+- Implementación de un sistema de plugins
+- Mejora de la accesibilidad
+
+
+*Este proyecto fue desarrollado como parte de un programa educativo, representando una exploración práctica de tecnologías web modernas y desarrollo de aplicaciones de escritorio.*
