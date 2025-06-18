@@ -47,7 +47,7 @@ Aplicación web responsive donde los estudiantes pueden seleccionar pueblos, vis
 
 ## Tecnologías Utilizadas
 
-- **Electron Forge** - Framework para aplicaciones de escritorio
+- **Electron Forge** - Herramienta para empaquetar y distribuir
 - **TypeScript** - Lenguaje de programación principal
 - **HTML/CSS/JavaScript** - Tecnologías web base
 - **Leaflet** - Librería de mapas interactivos
