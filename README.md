@@ -4,6 +4,23 @@
 
 POI Builder es una aplicación de escritorio desarrollada con Electron y TypeScript que permite a funcionarios y personal de ayuntamientos crear y gestionar puntos de interés (POI) para juegos educativos móviles. Esta herramienta forma parte de un proyecto más amplio cuyo objetivo es crear experiencias interactivas para que grupos de estudiantes descubran lugares emblemáticos, históricos o curiosos de sus pueblos.
 
+![image](https://github.com/user-attachments/assets/36fe42ba-8b1c-420c-9f09-9e2740d72da0)
+
+![Captura desde 2025-06-18 10-52-43](https://github.com/user-attachments/assets/3a2d3830-81fa-4e54-8b50-4cd245946262)
+
+![Captura desde 2025-06-18 10-54-03](https://github.com/user-attachments/assets/1d2f46ba-cf9f-4a1a-aed8-3baa8e1e1314)
+
+![Captura desde 2025-06-18 10-54-28](https://github.com/user-attachments/assets/519dfebf-2d7f-47f4-a627-8e87bc6c7d61)
+
+![Captura desde 2025-06-18 10-55-21](https://github.com/user-attachments/assets/28a2dcb5-8745-42d0-ba8d-83b3e8481fe5)
+
+![Captura desde 2025-06-18 10-55-30](https://github.com/user-attachments/assets/ade0544b-6dd2-4d4f-8ffd-4786367be425)
+
+
+
+
+
+
 ## Objetivo del Proyecto
 
 Crear un juego interactivo para móviles que permita a grupos de estudiantes descubrir lugares emblemáticos, históricos o curiosos de un pueblo (iglesias, pozos, ermitas, árboles singulares, etc.) respondiendo a preguntas tipo test en cada localización.
