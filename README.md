@@ -111,36 +111,7 @@ npm start
 npm run make
 ```
 
-## Características Técnicas
 
-### Arquitectura de Componentes
-La aplicación está estructurada en módulos reutilizables siguiendo principios de separación de responsabilidades:
-
-- **Gestión de vistas**: Navegación entre diferentes pantallas
-- **Gestión de mapas**: Integración con Leaflet para mapas interactivos
-- **Gestión de datos**: Creación y manipulación de POIs
-- **Exportación**: Generación de archivos JSON estructurados
-
-### Metodología CSS
-- **BEM (Block Element Modifier)**: Convención de nomenclatura para CSS
-- **CSS Modular**: Archivos separados por componente
-- **Paleta de colores consistente**: Diseño visual cohesivo
-
-### Manejo de Estado
-- Gestión local de datos de POIs
-- Persistencia mediante archivos JSON
-- Interfaz reactiva a cambios de estado
-
-## Experiencia de Desarrollo
-
-Este proyecto representa mi primera incursión seria en TypeScript, viniendo de un background en Java. La transición desde un lenguaje fuertemente tipado como Java a JavaScript, y posteriormente a TypeScript, presentó desafíos interesantes:
-
-### Aprendizajes Clave
-- **TypeScript**: Aprovechamiento del sistema de tipos para mayor robustez
-- **Electron**: Comprensión de la arquitectura de procesos múltiples
-- **Desarrollo sin framework**: Creación de componentes modulares en JavaScript vanilla
-- **CSS avanzado**: Implementación de metodologías como BEM
-- **Mapas web**: Integración de librerías de mapas interactivos
 
 ### Decisiones de Diseño
 - **Modularización**: A pesar de no usar un framework como React o Vue, la aplicación está estructurada en módulos reutilizables
