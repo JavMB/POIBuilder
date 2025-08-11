@@ -24,8 +24,7 @@ POI Builder es una aplicación de escritorio desarrollada con Electron y TypeScr
 
 El proyecto se divide en tres fases principales:
 
-### 1. Aplicación de Escritorio con Electron (Esta aplicación)
-**Responsables:** Alumnos de DAM
+### 1. Aplicación de Escritorio con Electron 
 
 **Funcionalidades:**
 - Seleccionar pueblo o zona
