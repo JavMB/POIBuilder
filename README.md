@@ -54,34 +54,6 @@ Aplicación web responsive donde los estudiantes pueden seleccionar pueblos, vis
 - **OpenStreetMap** - Proveedor de mapas
 - **Node.js** - Entorno de ejecución
 
-## Estructura del Proyecto
-
-```
-POIBuilder/
-├── src/
-│   ├── main.ts          # Proceso principal de Electron
-│   ├── preload.ts       # Script de precarga
-│   ├── renderer.ts      # Proceso de renderizado
-│   └── ui/              # Módulos de interfaz de usuario
-│       ├── CargarVista.ts
-│       ├── Contacto.ts
-│       ├── GestionExplorar.ts
-│       ├── GestionPasos.ts
-│       └── Map.ts
-├── public/              # Páginas HTML
-│   ├── bienvenida.html
-│   ├── contacto.html
-│   ├── explorar.html
-│   ├── paso1.html
-│   ├── paso2.html
-│   └── paso3.html
-├── styles/              # Hojas de estilo CSS modulares
-│   ├── global.css
-│   ├── header.css
-│   └── [componente].css
-└── package.json
-```
-
 ## Instalación y Configuración
 
 ### Prerrequisitos
@@ -113,10 +85,5 @@ npm run make
 
 
 
-### Decisiones de Diseño
-- **Modularización**: A pesar de no usar un framework como React o Vue, la aplicación está estructurada en módulos reutilizables
-- **Separación de responsabilidades**: Cada componente tiene una función específica
-- **Diseño responsive**: Consideración de diferentes tamaños de pantalla
-- **Experiencia de usuario**: Interfaz intuitiva para usuarios no técnicos
 
 
